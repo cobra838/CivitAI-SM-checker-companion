@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Civitai Model Checker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    body[dir="rtl"] {
+      direction: rtl;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      padding: 40px;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 12px;
+      color: #212529;
+    }
+    .subtitle {
+      color: #868e96;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    #dropZone {
+      border: 3px dashed #339af0;
+      border-radius: 12px;
+      padding: 60px 40px;
+      text-align: center;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 24px;
+    }
+    #dropZone:hover {
+      background: #e7f5ff;
+      border-color: #1971c2;
+      transform: scale(1.02);
+    }
+    #dropZone .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    #dropZone .text {
+      font-size: 18px;
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    #dropZone .hint {
+      font-size: 14px;
+      color: #868e96;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #868e96;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 12px;
+    }
+    button:hover {
+      background: #495057;
+    }
+    #status {
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 24px;
+      display: none;
+    }
+    #status.info {
+      background: #e7f5ff;
+      color: #1971c2;
+      display: block;
+    }
+    #status.success {
+      background: #d3f9d8;
+      color: #2f9e44;
+      display: block;
+    }
+    #status.error {
+      background: #ffe0e0;
+      color: #c92a2a;
+      display: block;
+    }
+    #log {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f1f3f5;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      white-space: pre-wrap;
+    }
+    #fileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title"></h1>
+    <div class="subtitle" id="subtitle"></div>
+    
+    <div id="dropZone">
+      <div class="icon">📂</div>
+      <div class="text" id="dropZoneText"></div>
+      <div class="hint" id="dropZoneHint"></div>
+    </div>
+    
+    <input type="file" id="fileInput" webkitdirectory directory multiple>
+    
+    <button id="clearBtn"></button>
+    
+    <div id="status"></div>
+    <div id="log"></div>
+  </div>
+  
+  <script src="../i18n.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

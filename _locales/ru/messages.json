@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "Civitai SM Model Checker Companion"
+  },
+  "extensionDescription": {
+    "message": "Проверяет наличие скачанных моделей из Stability Matrix по файлу .cm-info.json"
+  }
+}
