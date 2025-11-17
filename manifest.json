@@ -5,7 +5,9 @@
   "description": "__MSG_extensionDescription__",
   "default_locale": "en",
   "permissions": [
-    "storage"
+    "storage",
+    "downloads",
+    "notifications"
   ],
   "host_permissions": [
     "https://civitai.com/*"
@@ -25,7 +27,7 @@
   "content_scripts": [
     {
       "matches": ["https://civitai.com/models/*"],
-      "js": ["i18n.js", "content.js"],
+      "js": ["download-manager.js", "i18n.js", "content.js"],
       "run_at": "document_idle"
     }
   ],

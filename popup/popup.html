@@ -17,6 +17,51 @@
       margin: 0 0 12px 0;
       font-size: 16px;
     }
+    .section {
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #495057;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      margin-bottom: 8px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    input[type="checkbox"] {
+      margin-right: 8px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .checkbox-label {
+      font-size: 13px;
+      color: #495057;
+      cursor: pointer;
+    }
     button {
       width: 100%;
       padding: 10px;
@@ -75,19 +120,72 @@
     #fileInput {
       display: none;
     }
+    .template-preview {
+      font-size: 11px;
+      color: #868e96;
+      font-style: italic;
+      margin-top: -4px;
+      margin-bottom: 8px;
+    }
+    .custom-template-group {
+      display: none;
+    }
+    .custom-template-group.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <h3 id="title"></h3>
   
-  <button id="selectBtn"></button>
-  <button id="clearBtn" class="secondary"></button>
-  
-  <input type="file" id="fileInput" webkitdirectory directory multiple>
+  <!-- Секция: Кеш моделей -->
+  <div class="section">
+    <div class="section-title" id="cacheSection"></div>
+    <button id="selectBtn"></button>
+    <button id="clearBtn" class="secondary"></button>
+    <input type="file" id="fileInput" webkitdirectory directory multiple>
+  </div>
+
+  <!-- Секция: Настройки скачивания -->
+  <div class="section">
+    <div class="section-title" id="downloadSection"></div>
+    
+    <label for="templateSelect" id="templateLabel"></label>
+    <select id="templateSelect">
+      <option value="default" data-i18n="templateDefault"></option>
+      <option value="detailed" data-i18n="templateDetailed"></option>
+      <option value="simple" data-i18n="templateSimple"></option>
+      <option value="id_based" data-i18n="templateIdBased"></option>
+      <option value="type_prefix" data-i18n="templateTypePrefix"></option>
+      <option value="full" data-i18n="templateFull"></option>
+      <option value="custom" data-i18n="templateCustom"></option>
+    </select>
+    
+    <div class="custom-template-group" id="customTemplateGroup">
+      <label for="customTemplate" id="customTemplateLabel"></label>
+      <input type="text" id="customTemplate" placeholder="{modelName}_v{versionName}">
+      <div class="template-preview">
+        Variables: {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel}
+      </div>
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="autoAddToCache">
+      <label for="autoAddToCache" class="checkbox-label" id="autoAddLabel"></label>
+    </div>
+
+    <div class="checkbox-group">
+      <input type="checkbox" id="alwaysAskLocation">
+      <label for="alwaysAskLocation" class="checkbox-label" id="alwaysAskLabel"></label>
+    </div>
+
+    <button id="saveSettingsBtn" class="secondary"><span id="saveSettingsText"></span></button>
+  </div>
   
   <div id="status"></div>
   <div id="log"></div>
   
+  <script src="../download-manager.js"></script>
   <script src="../i18n.js"></script>
   <script src="popup.js"></script>
 </body>

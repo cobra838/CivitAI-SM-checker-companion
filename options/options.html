@@ -19,7 +19,7 @@
       direction: rtl;
     }
     .container {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       background: white;
       border-radius: 16px;
@@ -36,12 +36,95 @@
       font-size: 14px;
       margin-bottom: 32px;
     }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #e9ecef;
+    }
+    .tab {
+      padding: 12px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: #868e96;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+    .tab:hover {
+      color: #495057;
+    }
+    .tab.active {
+      color: #339af0;
+      border-bottom-color: #339af0;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .section {
+      margin-bottom: 24px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212529;
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+    }
+    input[type="checkbox"] {
+      margin-right: 12px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    .checkbox-label {
+      font-size: 14px;
+      color: #495057;
+      cursor: pointer;
+    }
+    .help-text {
+      font-size: 12px;
+      color: #868e96;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
     #dropZone {
       border: 3px dashed #339af0;
       border-radius: 12px;
       padding: 60px 40px;
       text-align: center;
-      background: #f8f9fa;
+      background: white;
       cursor: pointer;
       transition: all 0.3s;
       margin-bottom: 24px;
@@ -66,20 +149,31 @@
       color: #868e96;
     }
     button {
-      width: 100%;
-      padding: 14px;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
-      background: #868e96;
+      background: #339af0;
       color: white;
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
       transition: background 0.2s;
-      margin-bottom: 12px;
+      margin-right: 8px;
     }
     button:hover {
+      background: #228be6;
+    }
+    button.secondary {
+      background: #868e96;
+    }
+    button.secondary:hover {
       background: #495057;
+    }
+    button.danger {
+      background: #f03e3e;
+    }
+    button.danger:hover {
+      background: #c92a2a;
     }
     #status {
       padding: 16px;
@@ -118,6 +212,36 @@
     #fileInput {
       display: none;
     }
+    .custom-template-group {
+      display: none;
+    }
+    .custom-template-group.active {
+      display: block;
+    }
+    .template-examples {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+    .template-examples strong {
+      color: #212529;
+    }
+    .template-examples code {
+      background: #f1f3f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .var-line {
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
@@ -125,20 +249,85 @@
     <h1 id="title"></h1>
     <div class="subtitle" id="subtitle"></div>
     
-    <div id="dropZone">
-      <div class="icon">📂</div>
-      <div class="text" id="dropZoneText"></div>
-      <div class="hint" id="dropZoneHint"></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="cache" id="tabCache"></button>
+      <button class="tab" data-tab="download" id="tabDownload"></button>
     </div>
-    
-    <input type="file" id="fileInput" webkitdirectory directory multiple>
-    
-    <button id="clearBtn"></button>
+
+    <!-- Tab: Cache Management -->
+    <div class="tab-content active" data-content="cache">
+      <div id="dropZone">
+        <div class="icon">📂</div>
+        <div class="text" id="dropZoneText"></div>
+        <div class="hint" id="dropZoneHint"></div>
+      </div>
+      
+      <input type="file" id="fileInput" webkitdirectory directory multiple>
+      
+      <div class="button-group">
+        <button id="clearBtn" class="danger"></button>
+      </div>
+    </div>
+
+    <!-- Tab: Download Settings -->
+    <div class="tab-content" data-content="download">
+      <div class="section">
+        <div class="section-title" id="fileNamingTitle"></div>
+        
+        <label for="templateSelect" id="templateLabel"></label>
+        <select id="templateSelect">
+          <option value="default" id="optDefault"></option>
+          <option value="detailed" id="optDetailed"></option>
+          <option value="simple" id="optSimple"></option>
+          <option value="id_based" id="optIdBased"></option>
+          <option value="type_prefix" id="optTypePrefix"></option>
+          <option value="full" id="optFull"></option>
+          <option value="custom" id="optCustom"></option>
+        </select>
+        
+        <div class="custom-template-group" id="customTemplateGroup">
+          <label for="customTemplate" id="customTemplateLabel"></label>
+          <input type="text" id="customTemplate" placeholder="{modelName}_v{versionName}">
+          
+          <div class="template-examples">
+            <strong id="templateVariablesTitle"></strong><br>
+            <div class="var-line"><code>{modelName}</code> - <span id="varModelName"></span></div>
+            <div class="var-line"><code>{versionName}</code> - <span id="varVersionName"></span></div>
+            <div class="var-line"><code>{modelId}</code> - <span id="varModelId"></span></div>
+            <div class="var-line"><code>{versionId}</code> - <span id="varVersionId"></span></div>
+            <div class="var-line"><code>{type}</code> - <span id="varType"></span></div>
+            <div class="var-line"><code>{baseModel}</code> - <span id="varBaseModel"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title" id="downloadBehaviorTitle"></div>
+        
+        <div class="checkbox-group">
+          <input type="checkbox" id="autoAddToCache">
+          <label for="autoAddToCache" class="checkbox-label" id="autoAddLabel"></label>
+        </div>
+        <div class="help-text" id="autoAddHelp"></div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="alwaysAskLocation">
+          <label for="alwaysAskLocation" class="checkbox-label" id="alwaysAskLabel"></label>
+        </div>
+        <div class="help-text" id="alwaysAskHelp"></div>
+      </div>
+
+      <div class="button-group">
+        <button id="saveSettingsBtn"></button>
+        <!-- <button id="resetSettingsBtn" class="secondary"></button> -->
+      </div>
+    </div>
     
     <div id="status"></div>
     <div id="log"></div>
   </div>
   
+  <script src="../download-manager.js"></script>
   <script src="../i18n.js"></script>
   <script src="options.js"></script>
 </body>

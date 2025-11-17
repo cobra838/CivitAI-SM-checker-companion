@@ -6,6 +6,8 @@
     let modelsCache = {};
     let cacheBuilt = false;
     let i18n = null;
+    let currentVersionId = null;
+    let downloadManager = null;
 
     const storageAPI = (typeof browser !== 'undefined') ? browser.storage.local : chrome.storage.local;
 
@@ -17,6 +19,10 @@
         // Initialize i18n
         i18n = new I18n();
         await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Initialize download manager
+        downloadManager = new DownloadManager();
+        await downloadManager.init();
 
         // Track URL changes
         (function hijackHistory() {
@@ -38,13 +44,20 @@
           setInterval(() => {
             if (location.search !== lastSearch && location.pathname.includes('/models/')) {
               lastSearch = location.search;
-              console.log(`${name_for_log} 📍 Version parameter changed:`, lastSearch);
+              console.log(`${name_for_log} 🔍 Version parameter changed:`, lastSearch);
               setTimeout(() => checkCurrentModel(), 300);
             }
           }, 500);
         })();
 
         // Load cache from storage
+        await loadCache();
+
+        await waitForElement('.mantine-Title-root');
+        await checkCurrentModel();
+    }
+
+    async function loadCache() {
         const result = await storageAPI.get('modelsCache');
         if (result.modelsCache) {
             modelsCache = JSON.parse(result.modelsCache);
@@ -54,9 +67,6 @@
             console.log(`${name_for_log} Cache is empty`);
             showNotification(i18n.t('cacheEmptyNotification'), 'info');
         }
-
-        await waitForElement('.mantine-Title-root');
-        await checkCurrentModel();
     }
 
     async function checkCurrentModel() {
@@ -69,21 +79,22 @@
                 return;
             }
 
+            currentVersionId = versionId;
             console.log(`${name_for_log} Version ID:`, versionId);
 
-            const modelInfo = await getModelInfo(versionId);
+            const modelInfo = await downloadManager.getModelInfo(versionId);
             if (!modelInfo) {
                 console.log(`${name_for_log} Failed to get model info`);
                 return;
             }
 
-            const modelId = modelInfo.model.id;
+            const modelId = modelInfo.modelId;
             const key = `${modelId}-${versionId}`;
             const isDownloaded = modelsCache.hasOwnProperty(key);
 
             console.log(`${name_for_log} Model ID:`, modelId, 'Downloaded:', isDownloaded);
 
-            addIndicator(isDownloaded, modelsCache[key]);
+            addIndicator(isDownloaded, modelsCache[key], versionId, modelInfo);
         } catch (e) {
             console.warn(`${name_for_log} Model check error:`, e);
         }
@@ -125,18 +136,6 @@
         return null;
     }
 
-    async function getModelInfo(versionId) {
-        try {
-            const url = `https://civitai.com/api/trpc/modelVersion.getById?input=${encodeURIComponent(JSON.stringify({json:{id:versionId,authed:true}}))}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            return data.result?.data?.json;
-        } catch (e) {
-            console.error(`${name_for_log} API error:`, e);
-            return null;
-        }
-    }
-
     function formatTimestamp(isoString) {
         const date = new Date(isoString);
         const year = date.getFullYear();
@@ -148,7 +147,22 @@
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-    function addIndicator(isDownloaded, modelData) {
+    async function handleDownload(versionId, modelInfo) {
+        try {
+            showNotification(i18n.t('Downloading...'), 'info');
+            await downloadManager.downloadModel(versionId, modelInfo);
+            // showNotification(i18n.t('Download Complete'), 'success');
+            
+            // Перезагружаем кеш и обновляем индикатор
+            await loadCache();
+            await checkCurrentModel();
+        } catch (e) {
+            console.error(`${name_for_log} Download error:`, e);
+            showNotification(i18n.t('downloadError'), 'error');
+        }
+    }
+
+    function addIndicator(isDownloaded, modelData, versionId, modelInfo) {
         const titleElement = document.querySelector('.mantine-Title-root');
         if (!titleElement) return;
 
@@ -172,7 +186,7 @@
             color: #ffffff;
             box-shadow: 0 2px 6px rgba(0,0,0,.25);
             transition: all .2s ease;
-            cursor: default;
+            cursor: ${isDownloaded ? 'default' : 'pointer'};
             user-select: none;
         `;
 
@@ -182,7 +196,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M20 6L9 17l-5-5"/>
                 </svg>
-                <span>${i18n.t('downloaded')}</span>
+                <span>${modelData.versionName || 'Downloaded'}</span>
             `;
             indicator.title = `${i18n.t('tooltipModel')}: ${modelData.modelName}\n${i18n.t('tooltipVersion')}: ${modelData.versionName}\n${i18n.t('tooltipType')}: ${modelData.type}\n${i18n.t('tooltipImport')}: ${imported}`;
         } else {
@@ -192,13 +206,52 @@
                     <path d="M7 11l5 5l5 -5"/>
                     <path d="M12 4l0 12"/>
                 </svg>
-                <span>${i18n.t('notDownloaded')}</span>
+                <span>${i18n.t('download')}</span>
             `;
+            indicator.title = i18n.t('download');
+            
+            // Add click handler for download
+            indicator.addEventListener('click', async () => {
+                if (versionId && !indicator.dataset.downloading) {
+                    indicator.dataset.downloading = 'true';
+                    indicator.style.opacity = '0.7';
+                    indicator.style.cursor = 'wait';
+                    indicator.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" opacity="0.25"/>
+                            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round">
+                                <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+                            </path>
+                        </svg>
+                        <span>${i18n.t('downloading')}</span>
+                    `;
+                    
+                    await handleDownload(versionId, modelInfo);
+                    
+                    delete indicator.dataset.downloading;
+                }
+            });
         }
 
         titleElement.parentElement.appendChild(indicator);
-        indicator.onmouseenter = () => indicator.style.transform = 'scale(1.05)';
-        indicator.onmouseleave = () => indicator.style.transform = 'scale(1)';
+        
+        if (isDownloaded) {
+            indicator.onmouseenter = () => indicator.style.transform = 'scale(1.05)';
+            indicator.onmouseleave = () => indicator.style.transform = 'scale(1)';
+        } else {
+            indicator.onmouseenter = () => {
+                if (!indicator.dataset.downloading) {
+                    indicator.style.transform = 'scale(1.05)';
+                    indicator.style.background = '#4b5563';
+                }
+            };
+            indicator.onmouseleave = () => {
+                if (!indicator.dataset.downloading) {
+                    indicator.style.transform = 'scale(1)';
+                    indicator.style.background = '#374151';
+                }
+            };
+        }
     }
 
     function showNotification(message, type = 'info') {
