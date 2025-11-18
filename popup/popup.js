@@ -13,7 +13,6 @@ const autoAddToCache = document.getElementById('autoAddToCache');
 const alwaysAskLocation = document.getElementById('alwaysAskLocation');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
-const storageAPI = (typeof browser !== 'undefined') ? browser.storage.local : chrome.storage.local;
 const i18n = new I18n();
 const downloadManager = new DownloadManager();
 
@@ -129,14 +128,14 @@ saveSettingsBtn.addEventListener('click', async () => {
 });
 
 // Load cache status
-storageAPI.get('modelsCache').then(result => {
-  if (result.modelsCache) {
-    const count = Object.keys(JSON.parse(result.modelsCache)).length;
-    showStatus(i18n.t('modelsInCache', { count }), 'success');
+(async () => {
+  const stats = await StorageAPI.cache.getStats();
+  if (stats.count > 0) {
+    showStatus(i18n.t('modelsInCache', { count: stats.count }), 'success');
   } else {
     showStatus(i18n.t('cacheEmpty'), 'info');
   }
-});
+})();
 
 selectBtn.addEventListener('click', () => {
   addLog(i18n.t('logOpeningDialog'));
@@ -159,47 +158,30 @@ async function processFiles(files) {
   
   showStatus(i18n.t('processingFiles', { count: files.length }), 'info');
   
-  const modelsCache = {};
-  let count = 0;
+  // Use Storage API to process files
+  const result = await StorageAPI.files.process(files);
   
-  for (const file of files) {
-    if (!file.name.endsWith('.cm-info.json')) continue;
-    
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-      
-      if (data.ModelId && data.VersionId) {
-        const key = `${data.ModelId}-${data.VersionId}`;
-        modelsCache[key] = {
-          modelId: data.ModelId,
-          versionId: data.VersionId,
-          modelName: data.ModelName,
-          versionName: data.VersionName,
-          baseModel: data.BaseModel,
-          type: data.ModelType,
-          importedAt: data.ImportedAt || null
-        };
-        count++;
-        addLog(`✅ ${data.ModelName}`);
-      }
-    } catch (err) {
-      addLog(`❌ ${file.name}`);
-    }
-  }
+  // Log successful models
+  Object.values(result.models).forEach(model => {
+    addLog(`✅ ${model.modelName}`);
+  });
   
-  if (count === 0) {
+  // Log errors
+  result.errors.forEach(err => {
+    addLog(`❌ ${err.file}`);
+  });
+  
+  if (!result.success) {
     showStatus(i18n.t('noValidFiles'), 'error');
     return;
   }
   
-  await storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
-  showStatus(i18n.t('modelsLoaded', { count }), 'success');
-  addLog(i18n.t('logTotal', { count }));
+  showStatus(i18n.t('modelsLoaded', { count: result.count }), 'success');
+  addLog(i18n.t('logTotal', { count: result.count }));
 }
 
 clearBtn.addEventListener('click', async () => {
-  await storageAPI.remove('modelsCache');
+  await StorageAPI.cache.clear();
   showStatus(i18n.t('cacheCleared'), 'info');
   addLog(i18n.t('cacheCleared'));
 });

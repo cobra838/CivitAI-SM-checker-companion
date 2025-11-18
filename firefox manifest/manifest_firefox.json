@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["https://civitai.com/models/*"],
-      "js": ["download-manager.js", "i18n.js", "content.js"],
+      "js": ["storage-api.js", "download-manager.js", "i18n.js", "content.js"],
       "run_at": "document_idle"
     }
   ],

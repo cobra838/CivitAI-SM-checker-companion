@@ -156,9 +156,9 @@ class DownloadManager {
           if (response && response.success) {
             console.log(`${name_for_log} Download started successfully`);
             
-            // Автоматически добавляем в кеш, если включено
-            if (this.settings.autoAddToCache) {
-              await this.addToCache(modelInfo);
+            // Автоматически добавляем в кеш через Storage API
+            if (this.settings.autoAddToCache && typeof StorageAPI !== 'undefined') {
+              await StorageAPI.cache.add(modelInfo);
             }
             
             resolve(response);
@@ -171,39 +171,6 @@ class DownloadManager {
     } catch (e) {
       console.error(`${name_for_log} Download error:`, e);
       throw e;
-    }
-  }
-
-  /**
-   * Добавление модели в кеш после скачивания
-   */
-  async addToCache(modelInfo) {
-    try {
-      const result = await this.storageAPI.get('modelsCache');
-      let modelsCache = {};
-      
-      if (result.modelsCache) {
-        modelsCache = JSON.parse(result.modelsCache);
-      }
-
-      const key = `${modelInfo.modelId}-${modelInfo.versionId}`;
-      modelsCache[key] = {
-        modelId: modelInfo.modelId,
-        versionId: modelInfo.versionId,
-        modelName: modelInfo.modelName,
-        versionName: modelInfo.versionName,
-        baseModel: modelInfo.baseModel,
-        type: modelInfo.type,
-        importedAt: new Date().toISOString()
-      };
-
-      await this.storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
-      console.log(`${name_for_log} Added to cache:`, key);
-      
-      return true;
-    } catch (e) {
-      console.error(`${name_for_log} Failed to add to cache:`, e);
-      return false;
     }
   }
 

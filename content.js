@@ -3,16 +3,14 @@
 
     const name_for_log = '[Civitai Checker]';
 
-    let contextMenu = null;   // глобальное контекст-меню
-    let currentContextKey = ''; // ключ модели, по которой кликнули
+    let contextMenu = null;
+    let currentContextKey = '';
 
     let modelsCache = {};
     let cacheBuilt = false;
     let i18n = null;
     let currentVersionId = null;
     let downloadManager = null;
-
-    const storageAPI = (typeof browser !== 'undefined') ? browser.storage.local : chrome.storage.local;
 
     init();
 
@@ -47,7 +45,7 @@
           setInterval(() => {
             if (location.search !== lastSearch && location.pathname.includes('/models/')) {
               lastSearch = location.search;
-              console.log(`${name_for_log} 🔍 Version parameter changed:`, lastSearch);
+              console.log(`${name_for_log} 🔄 Version parameter changed:`, lastSearch);
               setTimeout(() => checkCurrentModel(), 300);
             }
           }, 500);
@@ -71,41 +69,27 @@
           contextMenu.innerHTML = `<div style="padding:6px 12px;">${i18n.t('removeFromCache')}</div>`;
           document.body.appendChild(contextMenu);
 
-          // клик по пункту меню
           contextMenu.firstElementChild.onclick = async () => {
             if (!currentContextKey) return;
-         
-            // 1. Получаем кеш и сразу восстанавливаем объект
-            const raw = await storageAPI.get('modelsCache');
-            let modelsCache = {};
-            if (raw.modelsCache) {
-              const parsed = JSON.parse(raw.modelsCache);
-              if (Array.isArray(parsed)) {
-                console.error('[Delete] Cache is array, aborting');
-                return;
-              }
-              modelsCache = parsed;
-            }
-         
-            // 2. Удаляем ключ
-            console.log(`${name_for_log} - Before delete modelsCache keys:`, Object.keys(modelsCache).length);
-            delete modelsCache[currentContextKey];
-            console.log(`${name_for_log} - After delete modelsCache keys:`, Object.keys(modelsCache).length);
-         
-            // 3. Сохраняем обратно
-            await storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
-         
-            // 4. Перезагружаем локальную переменную
+            
+            console.log(`${name_for_log} Before delete modelsCache keys:`, Object.keys(modelsCache).length);
+            
+            // Use Storage API to remove from cache
+            await StorageAPI.cache.remove(currentContextKey);
+            
+            console.log(`${name_for_log} After delete modelsCache keys:`, Object.keys(modelsCache).length - 1);
+            
+            // Reload local cache
             await loadCache();
-         
-            // 5. Перерисовываем
+            
+            // Redraw indicator
             checkCurrentModel();
-         
-            // 6. Скрываем меню
+            
+            // Hide menu
             contextMenu.style.display = 'none';
           };
 
-          // скрыть меню при клике в любом месте
+          // Hide menu on click anywhere
           document.addEventListener('click', () => contextMenu.style.display = 'none', { capture: true });
         }
         
@@ -113,19 +97,13 @@
     }
 
     async function loadCache() {
-      const result = await storageAPI.get('modelsCache');
-      if (result.modelsCache) {
-        const parsed = JSON.parse(result.modelsCache);
-        if (Array.isArray(parsed)) {
-          modelsCache = {};
-          console.warn(`${name_for_log} Cache was array, converted to empty object`);
-        } else {
-          modelsCache = parsed;
-        }
-        cacheBuilt = true;
-        console.log(`${name_for_log} Cache loaded:`, Object.keys(modelsCache).length, 'models');
-      } else {
-        console.log(`${name_for_log} Cache is empty`);
+      modelsCache = await StorageAPI.cache.load();
+      cacheBuilt = true;
+      
+      const count = Object.keys(modelsCache).length;
+      console.log(`${name_for_log} Cache loaded:`, count, 'models');
+      
+      if (count === 0) {
         showNotification(i18n.t('cacheEmptyNotification'), 'info');
       }
     }
@@ -210,11 +188,11 @@
 
     async function handleDownload(versionId, modelInfo) {
         try {
-            showNotification(i18n.t('Downloading...'), 'info');
+            showNotification(i18n.t('downloading'), 'info');
             await downloadManager.downloadModel(versionId, modelInfo);
-            // showNotification(i18n.t('Download Complete'), 'success');
+            // showNotification(i18n.t('downloadComplete'), 'success');
             
-            // Перезагружаем кеш и обновляем индикатор
+            // Reload cache and update indicator
             await loadCache();
             await checkCurrentModel();
         } catch (e) {
@@ -260,24 +238,26 @@
                 <span>${modelData.versionName || 'Downloaded'}</span>
             `;
             indicator.title = `${i18n.t('tooltipModel')}: ${modelData.modelName}\n${i18n.t('tooltipVersion')}: ${modelData.versionName}\n${i18n.t('tooltipType')}: ${modelData.type}\n${i18n.t('tooltipImport')}: ${imported}`;
+            indicator.style.cursor = 'default';
             
             indicator.addEventListener('contextmenu', (e) => {
               e.preventDefault();
-              currentContextKey = key; // ключ модели
+              currentContextKey = key;
               contextMenu.style.left = e.pageX + 'px';
               contextMenu.style.top  = e.pageY + 'px';
               contextMenu.style.display = 'block';
             });
         } else {
+            const versionName = modelInfo?.versionName || i18n.t('download');
             indicator.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/>
                     <path d="M7 11l5 5l5 -5"/>
                     <path d="M12 4l0 12"/>
                 </svg>
-                <span>${i18n.t('download')}</span>
+                <span>${versionName}</span>
             `;
-            indicator.title = i18n.t('download');
+            indicator.title = `${i18n.t('tooltipModel')}: ${modelInfo.modelName}\n${i18n.t('tooltipVersion')}: ${versionName}\n${i18n.t('tooltipType')}: ${modelInfo.type}\n\n${i18n.t('clicktodownload')}`;
             
             // Add click handler for download
             indicator.addEventListener('click', async () => {
@@ -304,23 +284,23 @@
 
         titleElement.parentElement.appendChild(indicator);
         
-        if (isDownloaded) {
-            indicator.onmouseenter = () => indicator.style.transform = 'scale(1.05)';
-            indicator.onmouseleave = () => indicator.style.transform = 'scale(1)';
-        } else {
-            indicator.onmouseenter = () => {
-                if (!indicator.dataset.downloading) {
-                    indicator.style.transform = 'scale(1.05)';
-                    indicator.style.background = '#4b5563';
-                }
-            };
-            indicator.onmouseleave = () => {
-                if (!indicator.dataset.downloading) {
-                    indicator.style.transform = 'scale(1)';
-                    indicator.style.background = '#374151';
-                }
-            };
-        }
+        // Hover effects
+        indicator.onmouseenter = () => {
+            if (!indicator.dataset.downloading && !isDownloaded) {
+                indicator.style.transform = 'scale(1.05)';
+                indicator.style.background = '#4b5563';
+            } else if (isDownloaded) {
+                indicator.style.transform = 'scale(1.05)';
+            }
+        };
+        indicator.onmouseleave = () => {
+            if (!indicator.dataset.downloading && !isDownloaded) {
+                indicator.style.transform = 'scale(1)';
+                indicator.style.background = '#374151';
+            } else if (isDownloaded) {
+                indicator.style.transform = 'scale(1)';
+            }
+        };
     }
 
     function showNotification(message, type = 'info') {
