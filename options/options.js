@@ -92,6 +92,12 @@ async function updateUI() {
     document.getElementById('varVersionId').textContent = i18n.t('templateVarVersionId');
     document.getElementById('varType').textContent = i18n.t('templateVarType');
     document.getElementById('varBaseModel').textContent = i18n.t('templateVarBaseModel');
+    document.getElementById('varCreatedAt').textContent = i18n.t('templateVarCreatedAt');
+    document.getElementById('varUpdatedAt').textContent = i18n.t('templateVarUpdatedAt');
+    document.getElementById('varCreatedTime').textContent = i18n.t('templateVarCreatedTime');
+    document.getElementById('varUpdatedTime').textContent = i18n.t('templateVarUpdatedTime');
+    document.getElementById('varOriginalFileName').textContent = i18n.t('templateVarOriginalFileName');
+    document.getElementById('varAuthor').textContent = i18n.t('templateAuthor');
 
     // Select options
     document.getElementById('optDefault').textContent = i18n.t('templateDefault');

@@ -46,9 +46,30 @@ class DownloadManager {
     }
 
     /**
+     * Format ISO date to readable string
+     */
+    formatDate(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        return date.toISOString().split('T')[0]; // YYYY-MM-DD
+    }
+    /**
+     * Format ISO date to time string
+     */
+    formatTime(isoString) {
+        if (!isoString) return '';
+        const date = new Date(isoString);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+        return `${hours}-${minutes}-${seconds}`; // HH-MM-SS
+    }
+
+    /**
      * Generate filename from template
      * Available variables:
-     * {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel}
+     * {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel},
+     * {createdAt}, {updatedAt}, {createdTime}, {updatedTime}, {originalFileName}
      */
     generateFileName(modelData, template = null) {
         const tmpl = template || this.settings.fileNameTemplate;
@@ -59,7 +80,13 @@ class DownloadManager {
             modelId: modelData.modelId || '',
             versionId: modelData.versionId || '',
             type: this.sanitizeFileName(modelData.type || 'model'),
-            baseModel: this.sanitizeFileName(modelData.baseModel || '')
+            baseModel: this.sanitizeFileName(modelData.baseModel || ''),
+            createdAt: this.formatDate(modelData.createdAt || ''),
+            updatedAt: this.formatDate(modelData.updatedAt || ''),
+            createdTime: this.formatTime(modelData.createdAt || ''),
+            updatedTime: this.formatTime(modelData.updatedAt || ''),
+            originalFileName: this.sanitizeFileName(this.getFileNameWithoutExtension(modelData.originalFileName || '')),
+            author: this.sanitizeFileName(modelData.username || '')
         };
 
         let fileName = tmpl;
@@ -69,7 +96,7 @@ class DownloadManager {
         });
 
         // Remove extra characters and spaces
-        fileName = fileName.replace(/\s+/g, '_').replace(/_{2,}/g, '_');
+        fileName = fileName.replace(/_{2,}/g, '_');
 
         // Add extension if missing
         if (!fileName.match(/\.(safetensors|ckpt|pt|bin)$/i)) {
@@ -80,12 +107,19 @@ class DownloadManager {
     }
 
     /**
+     * Get filename without extension
+     */
+    getFileNameWithoutExtension(fileName) {
+        return fileName.replace(/\.[^/.]+$/, '');
+    }
+
+    /**
      * Sanitize filename by removing invalid characters
      */
     sanitizeFileName(name) {
         return name
             .replace(/[<>:"/\\|?*]/g, '_')
-            .replace(/\s+/g, '_')
+            // .replace(/\s+/g, '_')
             .trim();
     }
 
@@ -94,28 +128,47 @@ class DownloadManager {
      */
     async getModelInfo(versionId) {
         try {
-            const url = `https://civitai.com/api/trpc/modelVersion.getById?input=${encodeURIComponent(JSON.stringify({json:{id:versionId,authed:true}}))}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const modelInfo = data.result?.data?.json;
+            // Сначала получаем базовую информацию о версии, чтобы узнать modelId
+            const versionUrl = `https://civitai.com/api/trpc/modelVersion.getById?input=${encodeURIComponent(JSON.stringify({json:{id:versionId,authed:true}}))}`;
+            const versionResponse = await fetch(versionUrl);
+            const versionData = await versionResponse.json();
+            const modelId = versionData.result?.data?.json?.model?.id;
 
-            if (!modelInfo) return null;
+            if (!modelId) return null;
 
+            // Теперь получаем полную информацию через model.getById
+            const modelUrl = `https://civitai.com/api/trpc/model.getById?input=${encodeURIComponent(JSON.stringify({json:{id:modelId,authed:true}}))}`;
+            const modelResponse = await fetch(modelUrl);
+            const modelData = await modelResponse.json();
+            const fullModelInfo = modelData.result?.data?.json;
+
+            if (!fullModelInfo) return null;
+
+            // Находим нужную версию в массиве modelVersions
+            const versionInfo = fullModelInfo.modelVersions.find(v => v.id === versionId);
+            if (!versionInfo) return null;
+
+            // Get primary file
+            const primaryFile = versionInfo.files && versionInfo.files.length > 0 ? versionInfo.files[0] : null;
+            
             return {
-                modelId: modelInfo.model.id,
-                versionId: modelInfo.id,
-                modelName: modelInfo.model.name,
-                versionName: modelInfo.name,
-                baseModel: modelInfo.baseModel,
-                type: modelInfo.model.type,
-                files: modelInfo.files || []
+                modelId: fullModelInfo.id,
+                versionId: versionInfo.id,
+                modelName: fullModelInfo.name,
+                versionName: versionInfo.name,
+                baseModel: versionInfo.baseModel,
+                type: fullModelInfo.type,
+                createdAt: versionInfo.createdAt,
+                updatedAt: versionInfo.updatedAt,
+                originalFileName: primaryFile?.name || '',
+                files: versionInfo.files || [],
+                username: fullModelInfo.user?.username || '',
             };
         } catch (e) {
             console.error(`${name_for_log} Failed to get model info:`, e);
             return null;
         }
     }
-
     /**
      * Get download URL
      */

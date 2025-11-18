@@ -62,7 +62,13 @@ const translations = {
     templateVarModelId: "Model ID",
     templateVarVersionId: "Version ID",
     templateVarType: "Model type (Checkpoint, LoRA, etc.)",
-    templateVarBaseModel: "Base model (SD 1.5, SDXL, etc.)"
+    templateVarBaseModel: "Base model (SD 1.5, SDXL, etc.)",
+    templateVarCreatedAt: "Version creation date (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Version update date (YYYY-MM-DD)",
+    templateVarCreatedTime: "Version creation time (HH-MM-SS)",
+    templateVarUpdatedTime: "Version update time (HH-MM-SS)",
+    templateVarOriginalFileName: "Original file name without extension",
+    templateAuthor: "User name"
   },
   es: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -127,7 +133,13 @@ const translations = {
     templateVarModelId: "ID del modelo",
     templateVarVersionId: "ID de la versión",
     templateVarType: "Tipo de modelo (Checkpoint, LoRA, etc.)",
-    templateVarBaseModel: "Modelo base (SD 1.5, SDXL, etc.)"
+    templateVarBaseModel: "Modelo base (SD 1.5, SDXL, etc.)",
+    templateVarCreatedAt: "Fecha de creación de la versión (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Fecha de actualización de la versión (YYYY-MM-DD)",
+    templateVarCreatedTime: "Hora de creación de la versión (HH-MM-SS)",
+    templateVarUpdatedTime: "Hora de actualización de la versión (HH-MM-SS)",
+    templateVarOriginalFileName: "Nombre original del archivo sin extensión",
+    templateAuthor: "User name"
   },
   fr: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -192,7 +204,13 @@ const translations = {
     templateVarModelId: "ID du modèle",
     templateVarVersionId: "ID de la version",
     templateVarType: "Type de modèle (Checkpoint, LoRA, etc.)",
-    templateVarBaseModel: "Modèle de base (SD 1.5, SDXL, etc.)"
+    templateVarBaseModel: "Modèle de base (SD 1.5, SDXL, etc.)",
+    templateVarCreatedAt: "Date de création de la version (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Date de mise à jour de la version (YYYY-MM-DD)",
+    templateVarCreatedTime: "Heure de création de la version (HH-MM-SS)",
+    templateVarUpdatedTime: "Heure de mise à jour de la version (HH-MM-SS)",
+    templateVarOriginalFileName: "Nom de fichier d'origine sans extension",
+    templateAuthor: "User name"
   },
   ja: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -257,7 +275,13 @@ const translations = {
     templateVarModelId: "モデルID",
     templateVarVersionId: "バージョンID",
     templateVarType: "モデルタイプ (Checkpoint, LoRA等)",
-    templateVarBaseModel: "ベースモデル (SD 1.5, SDXL等)"
+    templateVarBaseModel: "ベースモデル (SD 1.5, SDXL等)",
+    templateVarCreatedAt: "バージョン作成日 (YYYY-MM-DD)",
+    templateVarUpdatedAt: "バージョン更新日 (YYYY-MM-DD)",
+    templateVarCreatedTime: "バージョン作成時刻 (HH-MM-SS)",
+    templateVarUpdatedTime: "バージョン更新時刻 (HH-MM-SS)",
+    templateVarOriginalFileName: "拡張子なしのオリジナルファイル名",
+    templateAuthor: "User name"
   },
   ko: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -322,7 +346,13 @@ const translations = {
     templateVarModelId: "모델 ID",
     templateVarVersionId: "버전 ID",
     templateVarType: "모델 타입 (Checkpoint, LoRA 등)",
-    templateVarBaseModel: "기본 모델 (SD 1.5, SDXL 등)"
+    templateVarBaseModel: "기본 모델 (SD 1.5, SDXL 등)",
+    templateVarCreatedAt: "버전 생성 날짜 (YYYY-MM-DD)",
+    templateVarUpdatedAt: "버전 업데이트 날짜 (YYYY-MM-DD)",
+    templateVarCreatedTime: "버전 생성 시간 (HH-MM-SS)",
+    templateVarUpdatedTime: "버전 업데이트 시간 (HH-MM-SS)",
+    templateVarOriginalFileName: "확장자 없는 원래 파일 이름",
+    templateAuthor: "User name"
   },
   ru: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -387,7 +417,13 @@ const translations = {
     templateVarModelId: "ID модели",
     templateVarVersionId: "ID версии",
     templateVarType: "Тип модели (Checkpoint, LoRA, и т.д.)",
-    templateVarBaseModel: "Базовая модель (SD 1.5, SDXL, и т.д.)"
+    templateVarBaseModel: "Базовая модель (SD 1.5, SDXL, и т.д.)",
+    templateVarCreatedAt: "Дата создания версии (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Дата обновления версии (YYYY-MM-DD)",
+    templateVarCreatedTime: "Время создания версии (HH-MM-SS)",
+    templateVarUpdatedTime: "Время обновления версии (HH-MM-SS)",
+    templateVarOriginalFileName: "Оригинальное имя файла без расширения",
+    templateAuthor: "User name"
   },
   zh_CN: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -452,7 +488,13 @@ const translations = {
     templateVarModelId: "模型ID",
     templateVarVersionId: "版本ID",
     templateVarType: "模型类型 (Checkpoint, LoRA等)",
-    templateVarBaseModel: "基础模型 (SD 1.5, SDXL等)"
+    templateVarBaseModel: "基础模型 (SD 1.5, SDXL等)",
+    templateVarCreatedAt: "版本创建日期 (YYYY-MM-DD)",
+    templateVarUpdatedAt: "版本更新日期 (YYYY-MM-DD)",
+    templateVarCreatedTime: "版本创建时间 (HH-MM-SS)",
+    templateVarUpdatedTime: "版本更新时间 (HH-MM-SS)",
+    templateVarOriginalFileName: "无扩展名的原始文件名",
+    templateAuthor: "User name"
   },
   zh_TW: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -517,7 +559,13 @@ const translations = {
     templateVarModelId: "模型ID",
     templateVarVersionId: "版本ID",
     templateVarType: "模型類型 (Checkpoint, LoRA等)",
-    templateVarBaseModel: "基礎模型 (SD 1.5, SDXL等)"
+    templateVarBaseModel: "基礎模型 (SD 1.5, SDXL等)",
+    templateVarCreatedAt: "版本建立日期 (YYYY-MM-DD)",
+    templateVarUpdatedAt: "版本更新日期 (YYYY-MM-DD)",
+    templateVarCreatedTime: "版本建立時間 (HH-MM-SS)",
+    templateVarUpdatedTime: "版本更新時間 (HH-MM-SS)",
+    templateVarOriginalFileName: "不帶副檔名的原始檔案名稱",
+    templateAuthor: "User name"
   },
   de: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -582,7 +630,13 @@ const translations = {
     templateVarModelId: "Modell-ID",
     templateVarVersionId: "Versions-ID",
     templateVarType: "Modelltyp (Checkpoint, LoRA, etc.)",
-    templateVarBaseModel: "Basismodell (SD 1.5, SDXL, etc.)"
+    templateVarBaseModel: "Basismodell (SD 1.5, SDXL, etc.)",
+    templateVarCreatedAt: "Versions-Erstellungsdatum (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Versionsaktualisierungsdatum (YYYY-MM-DD)",
+    templateVarCreatedTime: "Versions-Erstellungszeit (HH-MM-SS)",
+    templateVarUpdatedTime: "Versionsaktualisierungszeit (HH-MM-SS)",
+    templateVarOriginalFileName: "Ursprünglicher Dateiname ohne Erweiterung",
+    templateAuthor: "User name"
   },
   pt_BR: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -647,7 +701,13 @@ const translations = {
     templateVarModelId: "ID do modelo",
     templateVarVersionId: "ID da versão",
     templateVarType: "Tipo do modelo (Checkpoint, LoRA, etc.)",
-    templateVarBaseModel: "Modelo base (SD 1.5, SDXL, etc.)"
+    templateVarBaseModel: "Modelo base (SD 1.5, SDXL, etc.)",
+    templateVarCreatedAt: "Data de criação da versão (YYYY-MM-DD)",
+    templateVarUpdatedAt: "Data de atualização da versão (YYYY-MM-DD)",
+    templateVarCreatedTime: "Hora de criação da versão (HH-MM-SS)",
+    templateVarUpdatedTime: "Hora de atualização da versão (HH-MM-SS)",
+    templateVarOriginalFileName: "Nome original do arquivo sem extensão",
+    templateAuthor: "User name"
   },
   ar: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -711,8 +771,11 @@ const translations = {
     templateVarVersionName: "اسم الإصدار",
     templateVarModelId: "معرف النموذج",
     templateVarVersionId: "معرف الإصدار",
+    templateVarCreatedTime: "وقت إنشاء الإصدار (HH-MM-SS)",
+    templateVarUpdatedTime: "وقت تحديث الإصدار (HH-MM-SS)",
     templateVarType: "نوع النموذج (Checkpoint, LoRA, إلخ)",
-    templateVarBaseModel: "النموذج الأساسي (SD 1.5, SDXL, إلخ)"
+    templateVarBaseModel: "النموذج الأساسي (SD 1.5, SDXL, إلخ)",
+    templateAuthor: "User name"
   }
 };
 
