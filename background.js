@@ -62,7 +62,7 @@ runtimeAPI.onMessage.addListener((request, sender, sendResponse) => {
 // Отслеживание завершения скачивания
 downloadsAPI.onChanged.addListener((delta) => {
   if (delta.state && delta.state.current === 'complete') {
-    console.log('[Background] Download completed:', delta.id);
+    console.log('[Background] Download completed:', delta?.id || 'unknown');
     
     // Можно добавить дополнительную логику при завершении
     storageAPI.get('activeDownloads').then(result => {
@@ -88,7 +88,8 @@ downloadsAPI.onChanged.addListener((delta) => {
       }
     });
   } else if (delta.state && delta.state.current === 'interrupted') {
-    console.error('[Background] Download interrupted:', delta.id);
+    const id = delta?.id ?? 'unknown';
+    console.log('[Background] Download interrupted:', id);
     
     // Очищаем информацию о прерванном скачивании
     storageAPI.get('activeDownloads').then(result => {

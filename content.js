@@ -3,6 +3,9 @@
 
     const name_for_log = '[Civitai Checker]';
 
+    let contextMenu = null;   // глобальное контекст-меню
+    let currentContextKey = ''; // ключ модели, по которой кликнули
+
     let modelsCache = {};
     let cacheBuilt = false;
     let i18n = null;
@@ -55,18 +58,78 @@
 
         await waitForElement('.mantine-Title-root');
         await checkCurrentModel();
+        
+        function createContextMenu() {
+          if (contextMenu) return;
+          contextMenu = document.createElement('div');
+          contextMenu.id = 'cc-context-menu';
+          contextMenu.style.cssText = `
+            position:absolute;z-index:999999;background:#fff;border:1px solid #ccc;
+            border-radius:6px;padding:4px 0;box-shadow:0 2px 8px rgba(0,0,0,.25);
+            display:none;font-size:13px;font-weight:600;color:#d32f2f;cursor:pointer;
+          `;
+          contextMenu.innerHTML = `<div style="padding:6px 12px;">${i18n.t('removeFromCache')}</div>`;
+          document.body.appendChild(contextMenu);
+
+          // клик по пункту меню
+          // клик по пункту меню
+          // клик по пункту меню
+          contextMenu.firstElementChild.onclick = async () => {
+            if (!currentContextKey) return;
+         
+            // 1. Получаем кеш и сразу восстанавливаем объект
+            const raw = await storageAPI.get('modelsCache');
+            let modelsCache = {};
+            if (raw.modelsCache) {
+              const parsed = JSON.parse(raw.modelsCache);
+              if (Array.isArray(parsed)) {
+                console.error('[Delete] Cache is array, aborting');
+                return;
+              }
+              modelsCache = parsed;
+            }
+         
+            // 2. Удаляем ключ
+            console.log('[Before delete] modelsCache keys:', Object.keys(modelsCache).length);
+            delete modelsCache[currentContextKey];
+            console.log('[After delete] modelsCache keys:', Object.keys(modelsCache).length);
+         
+            // 3. Сохраняем обратно
+            await storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
+         
+            // 4. Перезагружаем локальную переменную
+            await loadCache();
+         
+            // 5. Перерисовываем
+            checkCurrentModel();
+         
+            // 6. Скрываем меню
+            contextMenu.style.display = 'none';
+          };
+
+          // скрыть меню при клике в любом месте
+          document.addEventListener('click', () => contextMenu.style.display = 'none', { capture: true });
+        }
+        
+        createContextMenu();
     }
 
     async function loadCache() {
-        const result = await storageAPI.get('modelsCache');
-        if (result.modelsCache) {
-            modelsCache = JSON.parse(result.modelsCache);
-            cacheBuilt = true;
-            console.log(`${name_for_log} Cache loaded:`, Object.keys(modelsCache).length, 'models');
+      const result = await storageAPI.get('modelsCache');
+      if (result.modelsCache) {
+        const parsed = JSON.parse(result.modelsCache);
+        if (Array.isArray(parsed)) {
+          modelsCache = {};
+          console.warn('[Civitai Checker] Cache was array, converted to empty object');
         } else {
-            console.log(`${name_for_log} Cache is empty`);
-            showNotification(i18n.t('cacheEmptyNotification'), 'info');
+          modelsCache = parsed;
         }
+        cacheBuilt = true;
+        console.log(`${name_for_log} Cache loaded:`, Object.keys(modelsCache).length, 'models');
+      } else {
+        console.log(`${name_for_log} Cache is empty`);
+        showNotification(i18n.t('cacheEmptyNotification'), 'info');
+      }
     }
 
     async function checkCurrentModel() {
@@ -94,7 +157,7 @@
 
             console.log(`${name_for_log} Model ID:`, modelId, 'Downloaded:', isDownloaded);
 
-            addIndicator(isDownloaded, modelsCache[key], versionId, modelInfo);
+            addIndicator(isDownloaded, modelsCache[key], versionId, modelInfo, key);
         } catch (e) {
             console.warn(`${name_for_log} Model check error:`, e);
         }
@@ -162,7 +225,7 @@
         }
     }
 
-    function addIndicator(isDownloaded, modelData, versionId, modelInfo) {
+    function addIndicator(isDownloaded, modelData, versionId, modelInfo, key) {
         const titleElement = document.querySelector('.mantine-Title-root');
         if (!titleElement) return;
 
@@ -199,6 +262,14 @@
                 <span>${modelData.versionName || 'Downloaded'}</span>
             `;
             indicator.title = `${i18n.t('tooltipModel')}: ${modelData.modelName}\n${i18n.t('tooltipVersion')}: ${modelData.versionName}\n${i18n.t('tooltipType')}: ${modelData.type}\n${i18n.t('tooltipImport')}: ${imported}`;
+            
+            indicator.addEventListener('contextmenu', (e) => {
+              e.preventDefault();
+              currentContextKey = key; // ключ модели
+              contextMenu.style.left = e.pageX + 'px';
+              contextMenu.style.top  = e.pageY + 'px';
+              contextMenu.style.display = 'block';
+            });
         } else {
             indicator.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
