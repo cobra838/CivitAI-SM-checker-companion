@@ -72,8 +72,6 @@
           document.body.appendChild(contextMenu);
 
           // клик по пункту меню
-          // клик по пункту меню
-          // клик по пункту меню
           contextMenu.firstElementChild.onclick = async () => {
             if (!currentContextKey) return;
          
@@ -90,9 +88,9 @@
             }
          
             // 2. Удаляем ключ
-            console.log('[Before delete] modelsCache keys:', Object.keys(modelsCache).length);
+            console.log(`${name_for_log} - Before delete modelsCache keys:`, Object.keys(modelsCache).length);
             delete modelsCache[currentContextKey];
-            console.log('[After delete] modelsCache keys:', Object.keys(modelsCache).length);
+            console.log(`${name_for_log} - After delete modelsCache keys:`, Object.keys(modelsCache).length);
          
             // 3. Сохраняем обратно
             await storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
@@ -120,7 +118,7 @@
         const parsed = JSON.parse(result.modelsCache);
         if (Array.isArray(parsed)) {
           modelsCache = {};
-          console.warn('[Civitai Checker] Cache was array, converted to empty object');
+          console.warn(`${name_for_log} Cache was array, converted to empty object`);
         } else {
           modelsCache = parsed;
         }

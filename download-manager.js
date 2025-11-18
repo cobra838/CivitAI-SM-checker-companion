@@ -106,7 +106,7 @@ class DownloadManager {
         files: modelInfo.files || []
       };
     } catch (e) {
-      console.error('${name_for_log} Failed to get model info:', e);
+      console.error(`${name_for_log} Failed to get model info:`, e);
       return null;
     }
   }
@@ -137,7 +137,7 @@ class DownloadManager {
       const fileName = this.generateFileName(modelInfo);
       const downloadUrl = this.getDownloadUrl(versionId);
 
-      console.log('${name_for_log} Starting download:', {
+      console.log(`${name_for_log} Starting download:`, {
         url: downloadUrl,
         fileName: fileName,
         versionId: versionId
@@ -154,7 +154,7 @@ class DownloadManager {
           settings: this.settings
         }, async (response) => {
           if (response && response.success) {
-            console.log('${name_for_log} Download started successfully');
+            console.log(`${name_for_log} Download started successfully`);
             
             // Автоматически добавляем в кеш, если включено
             if (this.settings.autoAddToCache) {
@@ -163,13 +163,13 @@ class DownloadManager {
             
             resolve(response);
           } else {
-            console.error('${name_for_log} Download failed:', response?.error);
+            console.error(`${name_for_log} Download failed:`, response?.error);
             reject(new Error(response?.error || 'Download failed'));
           }
         });
       });
     } catch (e) {
-      console.error('${name_for_log} Download error:', e);
+      console.error(`${name_for_log} Download error:`, e);
       throw e;
     }
   }
@@ -198,11 +198,11 @@ class DownloadManager {
       };
 
       await this.storageAPI.set({ modelsCache: JSON.stringify(modelsCache) });
-      console.log('${name_for_log} Added to cache:', key);
+      console.log(`${name_for_log} Added to cache:`, key);
       
       return true;
     } catch (e) {
-      console.error('${name_for_log} Failed to add to cache:', e);
+      console.error(`${name_for_log} Failed to add to cache:`, e);
       return false;
     }
   }
