@@ -44,12 +44,6 @@ const translations = {
     resetSettings: "🔄 Reset to Defaults",
     settingsReset: "Settings reset to defaults",
     templateDefault: "Default (ModelName_vVersionName)",
-    templateDetailed: "Detailed (ModelName_VersionName_BaseModel)",
-    templateSimple: "Simple (ModelName)",
-    templateIdBased: "ID Based (ModelID-VersionID)",
-    templateTypePrefix: "Type Prefix ([Type]_ModelName_vVersionName)",
-    templateFull: "Full (Type_ModelName_vVersionName_BaseModel)",
-    templateCustom: "Custom...",
     tabCache: "📦 Cache",
     tabDownload: "⚙️ Download",
     fileNamingTitle: "File Naming",
@@ -68,7 +62,7 @@ const translations = {
     templateVarCreatedTime: "Version creation time (HH-MM-SS)",
     templateVarUpdatedTime: "Version update time (HH-MM-SS)",
     templateVarOriginalFileName: "Original file name without extension",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   es: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -115,12 +109,6 @@ const translations = {
     resetSettings: "🔄 Restablecer Valores",
     settingsReset: "Configuración restablecida",
     templateDefault: "Predeterminado (NombreModelo_vVersionName)",
-    templateDetailed: "Detallado (NombreModelo_VersionName_BaseModel)",
-    templateSimple: "Simple (NombreModelo)",
-    templateIdBased: "Basado en ID (ModelID-VersionID)",
-    templateTypePrefix: "Prefijo de Tipo ([Tipo]_NombreModelo_vVersionName)",
-    templateFull: "Completo (Tipo_NombreModelo_vVersionName_BaseModel)",
-    templateCustom: "Personalizado...",
     tabCache: "📦 Caché",
     tabDownload: "⚙️ Descarga",
     fileNamingTitle: "Nombres de Archivo",
@@ -139,7 +127,7 @@ const translations = {
     templateVarCreatedTime: "Hora de creación de la versión (HH-MM-SS)",
     templateVarUpdatedTime: "Hora de actualización de la versión (HH-MM-SS)",
     templateVarOriginalFileName: "Nombre original del archivo sin extensión",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   fr: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -186,12 +174,6 @@ const translations = {
     resetSettings: "🔄 Réinitialiser",
     settingsReset: "Paramètres réinitialisés",
     templateDefault: "Par défaut (NomModèle_vVersion)",
-    templateDetailed: "Détaillé (NomModèle_Version_BaseModel)",
-    templateSimple: "Simple (NomModèle)",
-    templateIdBased: "Basé sur ID (ModelID-VersionID)",
-    templateTypePrefix: "Préfixe Type ([Type]_NomModèle_vVersion)",
-    templateFull: "Complet (Type_NomModèle_vVersion_BaseModel)",
-    templateCustom: "Personnalisé...",
     tabCache: "📦 Cache",
     tabDownload: "⚙️ Téléchargement",
     fileNamingTitle: "Nommage des Fichiers",
@@ -210,7 +192,7 @@ const translations = {
     templateVarCreatedTime: "Heure de création de la version (HH-MM-SS)",
     templateVarUpdatedTime: "Heure de mise à jour de la version (HH-MM-SS)",
     templateVarOriginalFileName: "Nom de fichier d'origine sans extension",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   ja: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -257,12 +239,6 @@ const translations = {
     resetSettings: "🔄 リセット",
     settingsReset: "設定をリセットしました",
     templateDefault: "デフォルト (モデル名_vバージョン)",
-    templateDetailed: "詳細 (モデル名_バージョン_ベースモデル)",
-    templateSimple: "シンプル (モデル名)",
-    templateIdBased: "ID基準 (ModelID-VersionID)",
-    templateTypePrefix: "タイプ接頭辞 ([タイプ]_モデル名_vバージョン)",
-    templateFull: "完全 (タイプ_モデル名_vバージョン_ベースモデル)",
-    templateCustom: "カスタム...",
     tabCache: "📦 キャッシュ",
     tabDownload: "⚙️ ダウンロード",
     fileNamingTitle: "ファイル命名",
@@ -281,7 +257,7 @@ const translations = {
     templateVarCreatedTime: "バージョン作成時刻 (HH-MM-SS)",
     templateVarUpdatedTime: "バージョン更新時刻 (HH-MM-SS)",
     templateVarOriginalFileName: "拡張子なしのオリジナルファイル名",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   ko: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -328,12 +304,6 @@ const translations = {
     resetSettings: "🔄 초기화",
     settingsReset: "설정이 초기화되었습니다",
     templateDefault: "기본 (모델명_v버전)",
-    templateDetailed: "상세 (모델명_버전_기본모델)",
-    templateSimple: "간단 (모델명)",
-    templateIdBased: "ID 기반 (ModelID-VersionID)",
-    templateTypePrefix: "타입 접두사 ([타입]_모델명_v버전)",
-    templateFull: "전체 (타입_모델명_v버전_기본모델)",
-    templateCustom: "커스텀...",
     tabCache: "📦 캐시",
     tabDownload: "⚙️ 다운로드",
     fileNamingTitle: "파일 이름 지정",
@@ -352,7 +322,7 @@ const translations = {
     templateVarCreatedTime: "버전 생성 시간 (HH-MM-SS)",
     templateVarUpdatedTime: "버전 업데이트 시간 (HH-MM-SS)",
     templateVarOriginalFileName: "확장자 없는 원래 파일 이름",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   ru: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -399,12 +369,6 @@ const translations = {
     resetSettings: "🔄 Сбросить",
     settingsReset: "Настройки сброшены",
     templateDefault: "По умолчанию (ИмяМодели_vВерсия)",
-    templateDetailed: "Подробно (ИмяМодели_Версия_БазоваяМодель)",
-    templateSimple: "Просто (ИмяМодели)",
-    templateIdBased: "По ID (ModelID-VersionID)",
-    templateTypePrefix: "С типом ([Тип]_ИмяМодели_vВерсия)",
-    templateFull: "Полный (Тип_ИмяМодели_vВерсия_БазоваяМодель)",
-    templateCustom: "Свой...",
     tabCache: "📦 Кеш",
     tabDownload: "⚙️ Скачивание",
     fileNamingTitle: "Имена файлов",
@@ -423,7 +387,7 @@ const translations = {
     templateVarCreatedTime: "Время создания версии (HH-MM-SS)",
     templateVarUpdatedTime: "Время обновления версии (HH-MM-SS)",
     templateVarOriginalFileName: "Оригинальное имя файла без расширения",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   zh_CN: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -470,12 +434,6 @@ const translations = {
     resetSettings: "🔄 重置",
     settingsReset: "设置已重置",
     templateDefault: "默认 (模型名_v版本)",
-    templateDetailed: "详细 (模型名_版本_基础模型)",
-    templateSimple: "简单 (模型名)",
-    templateIdBased: "基于ID (ModelID-VersionID)",
-    templateTypePrefix: "类型前缀 ([类型]_模型名_v版本)",
-    templateFull: "完整 (类型_模型名_v版本_基础模型)",
-    templateCustom: "自定义...",
     tabCache: "📦 缓存",
     tabDownload: "⚙️ 下载",
     fileNamingTitle: "文件命名",
@@ -494,7 +452,7 @@ const translations = {
     templateVarCreatedTime: "版本创建时间 (HH-MM-SS)",
     templateVarUpdatedTime: "版本更新时间 (HH-MM-SS)",
     templateVarOriginalFileName: "无扩展名的原始文件名",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   zh_TW: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -541,12 +499,6 @@ const translations = {
     resetSettings: "🔄 重設",
     settingsReset: "設定已重設",
     templateDefault: "預設 (模型名_v版本)",
-    templateDetailed: "詳細 (模型名_版本_基礎模型)",
-    templateSimple: "簡單 (模型名)",
-    templateIdBased: "基於ID (ModelID-VersionID)",
-    templateTypePrefix: "類型前綴 ([類型]_模型名_v版本)",
-    templateFull: "完整 (類型_模型名_v版本_基礎模型)",
-    templateCustom: "自訂...",
     tabCache: "📦 快取",
     tabDownload: "⚙️ 下載",
     fileNamingTitle: "檔案命名",
@@ -565,7 +517,7 @@ const translations = {
     templateVarCreatedTime: "版本建立時間 (HH-MM-SS)",
     templateVarUpdatedTime: "版本更新時間 (HH-MM-SS)",
     templateVarOriginalFileName: "不帶副檔名的原始檔案名稱",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   de: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -612,12 +564,6 @@ const translations = {
     resetSettings: "🔄 Zurücksetzen",
     settingsReset: "Einstellungen zurückgesetzt",
     templateDefault: "Standard (ModellName_vVersion)",
-    templateDetailed: "Detailliert (ModellName_Version_BasisModell)",
-    templateSimple: "Einfach (ModellName)",
-    templateIdBased: "ID-basiert (ModellID-VersionID)",
-    templateTypePrefix: "Typ-Präfix ([Typ]_ModellName_vVersion)",
-    templateFull: "Vollständig (Typ_ModellName_vVersion_BasisModell)",
-    templateCustom: "Benutzerdefiniert...",
     tabCache: "📦 Cache",
     tabDownload: "⚙️ Download",
     fileNamingTitle: "Dateibenennung",
@@ -636,7 +582,7 @@ const translations = {
     templateVarCreatedTime: "Versions-Erstellungszeit (HH-MM-SS)",
     templateVarUpdatedTime: "Versionsaktualisierungszeit (HH-MM-SS)",
     templateVarOriginalFileName: "Ursprünglicher Dateiname ohne Erweiterung",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   pt_BR: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -683,12 +629,6 @@ const translations = {
     resetSettings: "🔄 Redefinir",
     settingsReset: "Configurações redefinidas",
     templateDefault: "Padrão (NomeModelo_vVersão)",
-    templateDetailed: "Detalhado (NomeModelo_Versão_ModeloBase)",
-    templateSimple: "Simples (NomeModelo)",
-    templateIdBased: "Baseado em ID (ModelID-VersionID)",
-    templateTypePrefix: "Prefixo de Tipo ([Tipo]_NomeModelo_vVersão)",
-    templateFull: "Completo (Tipo_NomeModelo_vVersão_ModeloBase)",
-    templateCustom: "Personalizado...",
     tabCache: "📦 Cache",
     tabDownload: "⚙️ Download",
     fileNamingTitle: "Nomenclatura de Arquivos",
@@ -707,7 +647,7 @@ const translations = {
     templateVarCreatedTime: "Hora de criação da versão (HH-MM-SS)",
     templateVarUpdatedTime: "Hora de atualização da versão (HH-MM-SS)",
     templateVarOriginalFileName: "Nome original do arquivo sem extensão",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   },
   ar: {
     extensionName: "Civitai SM Model Checker Companion",
@@ -754,12 +694,6 @@ const translations = {
     resetSettings: "🔄 إعادة تعيين",
     settingsReset: "تم إعادة تعيين الإعدادات",
     templateDefault: "افتراضي (اسم_النموذج_vالإصدار)",
-    templateDetailed: "مفصل (اسم_النموذج_الإصدار_النموذج_الأساسي)",
-    templateSimple: "بسيط (اسم_النموذج)",
-    templateIdBased: "معتمد على المعرف (ModelID-VersionID)",
-    templateTypePrefix: "بادئة النوع ([النوع]_اسم_النموذج_vالإصدار)",
-    templateFull: "كامل (النوع_اسم_النموذج_vالإصدار_النموذج_الأساسي)",
-    templateCustom: "مخصص...",
     tabCache: "📦 الذاكرة المؤقتة",
     tabDownload: "⚙️ التحميل",
     fileNamingTitle: "تسمية الملفات",
@@ -775,7 +709,7 @@ const translations = {
     templateVarUpdatedTime: "وقت تحديث الإصدار (HH-MM-SS)",
     templateVarType: "نوع النموذج (Checkpoint, LoRA, إلخ)",
     templateVarBaseModel: "النموذج الأساسي (SD 1.5, SDXL, إلخ)",
-    templateAuthor: "User name"
+    templateAuthor: "Username"
   }
 };
 

@@ -213,7 +213,7 @@
       display: none;
     }
     .custom-template-group {
-      display: none;
+      display: block;
     }
     .custom-template-group.active {
       display: block;
@@ -274,20 +274,9 @@
       <div class="section">
         <div class="section-title" id="fileNamingTitle"></div>
         
-        <label for="templateSelect" id="templateLabel"></label>
-        <select id="templateSelect">
-          <option value="default" id="optDefault"></option>
-          <option value="detailed" id="optDetailed"></option>
-          <option value="simple" id="optSimple"></option>
-          <option value="id_based" id="optIdBased"></option>
-          <option value="type_prefix" id="optTypePrefix"></option>
-          <option value="full" id="optFull"></option>
-          <option value="custom" id="optCustom"></option>
-        </select>
-        
         <div class="custom-template-group" id="customTemplateGroup">
           <label for="customTemplate" id="customTemplateLabel"></label>
-          <input type="text" id="customTemplate" placeholder="{modelName}_v{versionName}">
+          <input type="text" id="customTemplate" placeholder="{originalFileName}">
           
           <div class="template-examples">
             <strong id="templateVariablesTitle"></strong><br>

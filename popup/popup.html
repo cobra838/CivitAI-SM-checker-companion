@@ -128,7 +128,7 @@
       margin-bottom: 8px;
     }
     .custom-template-group {
-      display: none;
+      display: block;
     }
     .custom-template-group.active {
       display: block;
@@ -150,20 +150,9 @@
   <div class="section">
     <div class="section-title" id="downloadSection"></div>
     
-    <label for="templateSelect" id="templateLabel"></label>
-    <select id="templateSelect">
-      <option value="default" data-i18n="templateDefault"></option>
-      <option value="detailed" data-i18n="templateDetailed"></option>
-      <option value="simple" data-i18n="templateSimple"></option>
-      <option value="id_based" data-i18n="templateIdBased"></option>
-      <option value="type_prefix" data-i18n="templateTypePrefix"></option>
-      <option value="full" data-i18n="templateFull"></option>
-      <option value="custom" data-i18n="templateCustom"></option>
-    </select>
-    
     <div class="custom-template-group" id="customTemplateGroup">
       <label for="customTemplate" id="customTemplateLabel"></label>
-      <input type="text" id="customTemplate" placeholder="{modelName}_v{versionName}">
+      <input type="text" id="customTemplate" placeholder="{originalFileName}">
       <div class="template-preview">
         Variables: {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel}, {createdAt}, {updatedAt}, {createdTime}, {updatedTime}, {originalFileName}, {author}
       </div>

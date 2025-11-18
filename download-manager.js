@@ -9,7 +9,7 @@ class DownloadManager {
         this.runtimeAPI = (typeof browser !== 'undefined') ? browser.runtime : chrome.runtime;
         this.settings = null;
         this.defaultSettings = {
-            fileNameTemplate: '{modelName}_v{versionName}',
+            fileNameTemplate: '[{author}] {baseModel} - {originalFileName} ({createdAt}_{createdTime})',
             autoAddToCache: true,
             alwaysAskSaveLocation: true,
             downloadPrimaryFile: true
@@ -69,7 +69,7 @@ class DownloadManager {
      * Generate filename from template
      * Available variables:
      * {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel},
-     * {createdAt}, {updatedAt}, {createdTime}, {updatedTime}, {originalFileName}
+     * {createdAt}, {updatedAt}, {createdTime}, {updatedTime}, {originalFileName}, {author}
      */
     generateFileName(modelData, template = null) {
         const tmpl = template || this.settings.fileNameTemplate;
@@ -128,7 +128,7 @@ class DownloadManager {
      */
     async getModelInfo(versionId) {
         try {
-            // Сначала получаем базовую информацию о версии, чтобы узнать modelId
+            // First get basic version information to find out the modelId
             const versionUrl = `https://civitai.com/api/trpc/modelVersion.getById?input=${encodeURIComponent(JSON.stringify({json:{id:versionId,authed:true}}))}`;
             const versionResponse = await fetch(versionUrl);
             const versionData = await versionResponse.json();
@@ -136,7 +136,7 @@ class DownloadManager {
 
             if (!modelId) return null;
 
-            // Теперь получаем полную информацию через model.getById
+            // Now get the full information via model.GetById
             const modelUrl = `https://civitai.com/api/trpc/model.getById?input=${encodeURIComponent(JSON.stringify({json:{id:modelId,authed:true}}))}`;
             const modelResponse = await fetch(modelUrl);
             const modelData = await modelResponse.json();
@@ -144,7 +144,7 @@ class DownloadManager {
 
             if (!fullModelInfo) return null;
 
-            // Находим нужную версию в массиве modelVersions
+            // Find the required version in the modelVersions array
             const versionInfo = fullModelInfo.modelVersions.find(v => v.id === versionId);
             if (!versionInfo) return null;
 
@@ -230,34 +230,6 @@ class DownloadManager {
             console.error(`${name_for_log} Download error:`, e);
             throw e;
         }
-    }
-
-    /**
-     * Get preset filename templates
-     */
-    getFileNameTemplates() {
-        return {
-            'default': '{modelName}_v{versionName}',
-            'detailed': '{modelName}_{versionName}_{baseModel}',
-            'simple': '{modelName}',
-            'id_based': '{modelId}-{versionId}',
-            'type_prefix': '[{type}]_{modelName}_v{versionName}',
-            'full': '{type}_{modelName}_v{versionName}_{baseModel}'
-        };
-    }
-
-    /**
-     * Get template descriptions for UI
-     */
-    getTemplateDescriptions() {
-        return {
-            'default': 'ModelName_vVersionName',
-            'detailed': 'ModelName_VersionName_BaseModel',
-            'simple': 'ModelName',
-            'id_based': 'ModelID-VersionID',
-            'type_prefix': '[Type]_ModelName_vVersionName',
-            'full': 'Type_ModelName_vVersionName_BaseModel'
-        };
     }
 }
 

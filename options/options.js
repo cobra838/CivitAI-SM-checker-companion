@@ -9,7 +9,6 @@ const dropZoneText = document.getElementById('dropZoneText');
 const dropZoneHint = document.getElementById('dropZoneHint');
 
 // Download settings elements
-const templateSelect = document.getElementById('templateSelect');
 const customTemplateGroup = document.getElementById('customTemplateGroup');
 const customTemplate = document.getElementById('customTemplate');
 const autoAddToCache = document.getElementById('autoAddToCache');
@@ -75,7 +74,6 @@ async function updateUI() {
     // resetSettingsBtn.textContent = `${i18n.t('resetSettings')}`;
 
     // Labels
-    document.getElementById('templateLabel').textContent = i18n.t('templateLabel');
     document.getElementById('customTemplateLabel').textContent = i18n.t('customTemplateLabel');
     document.getElementById('autoAddLabel').textContent = i18n.t('autoAddLabel');
     document.getElementById('alwaysAskLabel').textContent = i18n.t('alwaysAskLabel');
@@ -99,14 +97,6 @@ async function updateUI() {
     document.getElementById('varOriginalFileName').textContent = i18n.t('templateVarOriginalFileName');
     document.getElementById('varAuthor').textContent = i18n.t('templateAuthor');
 
-    // Select options
-    document.getElementById('optDefault').textContent = i18n.t('templateDefault');
-    document.getElementById('optDetailed').textContent = i18n.t('templateDetailed');
-    document.getElementById('optSimple').textContent = i18n.t('templateSimple');
-    document.getElementById('optIdBased').textContent = i18n.t('templateIdBased');
-    document.getElementById('optTypePrefix').textContent = i18n.t('templateTypePrefix');
-    document.getElementById('optFull').textContent = i18n.t('templateFull');
-    document.getElementById('optCustom').textContent = i18n.t('templateCustom');
 
     if (i18n.currentLocale === 'ar') {
         document.body.setAttribute('dir', 'rtl');
@@ -122,51 +112,16 @@ async function loadDownloadSettings() {
     await downloadManager.init();
     const settings = downloadManager.settings;
 
-    // Determine selected template
-    const templates = downloadManager.getFileNameTemplates();
-    let selectedTemplate = 'default';
+    customTemplate.value = settings.fileNameTemplate;
 
-    for (const [key, value] of Object.entries(templates)) {
-        if (value === settings.fileNameTemplate) {
-            selectedTemplate = key;
-            break;
-        }
-    }
-
-    // If not found in presets - it's custom
-    if (selectedTemplate === 'default' && settings.fileNameTemplate !== templates.default) {
-        selectedTemplate = 'custom';
-        customTemplate.value = settings.fileNameTemplate;
-        customTemplateGroup.classList.add('active');
-    }
-
-    templateSelect.value = selectedTemplate;
     autoAddToCache.checked = settings.autoAddToCache;
     alwaysAskLocation.checked = settings.alwaysAskSaveLocation;
 }
 
-// Show/hide custom template input
-templateSelect.addEventListener('change', () => {
-    if (templateSelect.value === 'custom') {
-        customTemplateGroup.classList.add('active');
-    } else {
-        customTemplateGroup.classList.remove('active');
-    }
-});
-
 // Save settings
 saveSettingsBtn.addEventListener('click', async () => {
-    const templates = downloadManager.getFileNameTemplates();
-    let fileNameTemplate;
-
-    if (templateSelect.value === 'custom') {
-        fileNameTemplate = customTemplate.value || templates.default;
-    } else {
-        fileNameTemplate = templates[templateSelect.value];
-    }
-
     const settings = {
-        fileNameTemplate: fileNameTemplate,
+        fileNameTemplate: customTemplate.value,
         autoAddToCache: autoAddToCache.checked,
         alwaysAskSaveLocation: alwaysAskLocation.checked
     };
