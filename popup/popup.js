@@ -36,18 +36,18 @@ async function updateUI() {
     selectBtn.textContent = `${i18n.t('selectFolder')}`;
     clearBtn.textContent = `${i18n.t('clearCache')}`;
 
-    // Переводим заголовки секций
+    // Translate section titles
     document.getElementById('cacheSection').textContent = `${i18n.t('cacheSection')}`;
     document.getElementById('downloadSection').textContent = `${i18n.t('downloadSection')}`;
 
-    // Переводим лейблы
+    // Translate labels
     document.getElementById('templateLabel').textContent = i18n.t('templateLabel');
     document.getElementById('customTemplateLabel').textContent = i18n.t('customTemplateLabel');
     document.getElementById('autoAddLabel').textContent = i18n.t('autoAddLabel');
     document.getElementById('alwaysAskLabel').textContent = i18n.t('alwaysAskLabel');
     document.getElementById('saveSettingsText').textContent = i18n.t('saveSettings');
 
-    // Переводим опции селекта
+    // Translate select options
     const options = templateSelect.querySelectorAll('option');
     options.forEach(option => {
         const i18nKey = option.getAttribute('data-i18n');
@@ -62,7 +62,7 @@ async function updateUI() {
 
     addLog(i18n.t('logBrowser') + ': ' + (typeof browser !== 'undefined' ? 'Firefox' : 'Chrome/Edge'));
 
-    // Загружаем настройки скачивания
+    // Load download settings
     await loadDownloadSettings();
 }
 
@@ -70,7 +70,7 @@ async function loadDownloadSettings() {
     await downloadManager.init();
     const settings = downloadManager.settings;
 
-    // Определяем какой шаблон выбран
+    // Determine which template is selected
     const templates = downloadManager.getFileNameTemplates();
     let selectedTemplate = 'default';
 

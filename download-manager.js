@@ -1,7 +1,7 @@
 const name_for_log = '[Civitai Checker DownloadManager]';
 
 /**
- * Download Manager - управление скачиванием моделей
+ * Download Manager - model download management
  */
 class DownloadManager {
     constructor() {
@@ -17,14 +17,14 @@ class DownloadManager {
     }
 
     /**
-     * Инициализация - загрузка настроек
+     * Initialization - load settings
      */
     async init() {
         await this.loadSettings();
     }
 
     /**
-     * Загрузка настроек из storage
+     * Load settings from storage
      */
     async loadSettings() {
         const result = await this.storageAPI.get('downloadSettings');
@@ -33,7 +33,7 @@ class DownloadManager {
     }
 
     /**
-     * Сохранение настроек
+     * Save settings
      */
     async saveSettings(settings) {
         this.settings = {
@@ -46,8 +46,8 @@ class DownloadManager {
     }
 
     /**
-     * Генерация имени файла по шаблону
-     * Доступные переменные:
+     * Generate filename from template
+     * Available variables:
      * {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel}
      */
     generateFileName(modelData, template = null) {
@@ -68,10 +68,10 @@ class DownloadManager {
             fileName = fileName.replace(regex, variables[key]);
         });
 
-        // Убираем лишние символы и пробелы
+        // Remove extra characters and spaces
         fileName = fileName.replace(/\s+/g, '_').replace(/_{2,}/g, '_');
 
-        // Добавляем расширение если нет
+        // Add extension if missing
         if (!fileName.match(/\.(safetensors|ckpt|pt|bin)$/i)) {
             fileName += '.safetensors';
         }
@@ -80,7 +80,7 @@ class DownloadManager {
     }
 
     /**
-     * Очистка имени файла от недопустимых символов
+     * Sanitize filename by removing invalid characters
      */
     sanitizeFileName(name) {
         return name
@@ -90,7 +90,7 @@ class DownloadManager {
     }
 
     /**
-     * Получение информации о модели с API
+     * Get model information from API
      */
     async getModelInfo(versionId) {
         try {
@@ -117,7 +117,7 @@ class DownloadManager {
     }
 
     /**
-     * Получение URL для скачивания
+     * Get download URL
      */
     getDownloadUrl(versionId, fileId = null) {
         let url = `https://civitai.com/api/download/models/${versionId}`;
@@ -128,17 +128,17 @@ class DownloadManager {
     }
 
     /**
-     * Основная функция скачивания модели
+     * Main model download function
      */
     async downloadModel(versionId, modelInfoProvided = null) {
         try {
-            // Получаем информацию о модели
+            // Get model information
             const modelInfo = modelInfoProvided || await this.getModelInfo(versionId);
             if (!modelInfo) {
                 throw new Error('Failed to get model info');
             }
 
-            // Генерируем имя файла
+            // Generate filename
             const fileName = this.generateFileName(modelInfo);
             const downloadUrl = this.getDownloadUrl(versionId);
 
@@ -148,7 +148,7 @@ class DownloadManager {
                 versionId: versionId
             });
 
-            // Отправляем запрос на скачивание в background script
+            // Send download request to background script
             return new Promise((resolve, reject) => {
                 this.runtimeAPI.sendMessage({
                     action: 'download',
@@ -161,7 +161,7 @@ class DownloadManager {
                     if (response && response.success) {
                         console.log(`${name_for_log} Download started successfully`);
 
-                        // Автоматически добавляем в кеш через Storage API
+                        // Automatically add to cache via Storage API
                         if (this.settings.autoAddToCache && typeof StorageAPI !== 'undefined') {
                             await StorageAPI.cache.add(modelInfo);
                         }
@@ -180,7 +180,7 @@ class DownloadManager {
     }
 
     /**
-     * Получение предустановленных шаблонов имен файлов
+     * Get preset filename templates
      */
     getFileNameTemplates() {
         return {
@@ -194,7 +194,7 @@ class DownloadManager {
     }
 
     /**
-     * Получение описаний шаблонов для UI
+     * Get template descriptions for UI
      */
     getTemplateDescriptions() {
         return {
@@ -208,7 +208,7 @@ class DownloadManager {
     }
 }
 
-// Экспорт для использования в других скриптах
+// Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = DownloadManager;
 }

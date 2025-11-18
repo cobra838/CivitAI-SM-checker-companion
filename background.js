@@ -21,12 +21,12 @@ runtimeAPI.onMessage.addListener((request, sender, sendResponse) => {
             conflictAction: 'uniquify'
         };
 
-        // Если указано имя файла, используем его
+        // If filename is specified in the request, use it
         if (request.fileName) {
             downloadOptions.filename = request.fileName;
         }
 
-        // Если в настройках указано всегда спрашивать
+        // If settings specify to always ask for save location
         if (request.settings && request.settings.alwaysAskSaveLocation) {
             downloadOptions.saveAs = true;
         }
@@ -36,7 +36,7 @@ runtimeAPI.onMessage.addListener((request, sender, sendResponse) => {
             .then((downloadId) => {
                 console.log('[Background] Download started with ID:', downloadId);
 
-                // Сохраняем информацию о скачивании для отслеживания
+                // Save download information for tracking
                 storageAPI.get('activeDownloads').then(result => {
                     const activeDownloads = result.activeDownloads || {};
                     activeDownloads[downloadId] = {
@@ -67,12 +67,12 @@ runtimeAPI.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// Отслеживание завершения скачивания
+// Track download completion
 downloadsAPI.onChanged.addListener((delta) => {
     if (delta.state && delta.state.current === 'complete') {
         console.log('[Background] Download completed:', delta?.id || 'unknown');
 
-        // Можно добавить дополнительную логику при завершении
+        // Can add additional logic on completion
         storageAPI.get('activeDownloads').then(result => {
             const activeDownloads = result.activeDownloads || {};
             const downloadInfo = activeDownloads[delta.id];
@@ -80,7 +80,7 @@ downloadsAPI.onChanged.addListener((delta) => {
             if (downloadInfo) {
                 console.log('[Background] Download info:', downloadInfo);
 
-                // Уведомляем об успешном завершении
+                // Notify about successful completion
                 if (typeof browser !== 'undefined') {
                     browser.notifications.create({
                         type: 'basic',
@@ -90,7 +90,7 @@ downloadsAPI.onChanged.addListener((delta) => {
                     });
                 }
 
-                // Удаляем из активных скачиваний
+                // Remove from active downloads
                 delete activeDownloads[delta.id];
                 storageAPI.set({
                     activeDownloads
@@ -101,7 +101,7 @@ downloadsAPI.onChanged.addListener((delta) => {
         const id = delta?.id ?? 'unknown';
         console.log('[Background] Download interrupted:', id);
 
-        // Очищаем информацию о прерванном скачивании
+        // Clean up information about interrupted download
         storageAPI.get('activeDownloads').then(result => {
             const activeDownloads = result.activeDownloads || {};
             delete activeDownloads[delta.id];

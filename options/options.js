@@ -56,17 +56,17 @@ tabs.forEach(tab => {
 });
 
 async function updateUI() {
-    // Основные тексты
+    // Main text
     title.textContent = `${i18n.t('title')}`;
     subtitle.textContent = i18n.t('subtitle');
     dropZoneText.textContent = i18n.t('dropZoneTitle');
     dropZoneHint.textContent = i18n.t('dropZoneHint');
 
-    // Табы
+    // Tabs
     document.getElementById('tabCache').textContent = `${i18n.t('tabCache')}`;
     document.getElementById('tabDownload').textContent = ` ${i18n.t('tabDownload')}`;
 
-    // Заголовки секций
+    // Section titles
     document.getElementById('fileNamingTitle').textContent = i18n.t('fileNamingTitle');
     document.getElementById('downloadBehaviorTitle').textContent = i18n.t('downloadBehaviorTitle');
 
@@ -74,13 +74,13 @@ async function updateUI() {
     saveSettingsBtn.textContent = `${i18n.t('saveSettings')}`;
     // resetSettingsBtn.textContent = `${i18n.t('resetSettings')}`;
 
-    // Лейблы
+    // Labels
     document.getElementById('templateLabel').textContent = i18n.t('templateLabel');
     document.getElementById('customTemplateLabel').textContent = i18n.t('customTemplateLabel');
     document.getElementById('autoAddLabel').textContent = i18n.t('autoAddLabel');
     document.getElementById('alwaysAskLabel').textContent = i18n.t('alwaysAskLabel');
 
-    // Help текст
+    // Help text
     document.getElementById('autoAddHelp').textContent = i18n.t('autoAddHelp');
     document.getElementById('alwaysAskHelp').textContent = i18n.t('alwaysAskHelp');
 
@@ -93,7 +93,7 @@ async function updateUI() {
     document.getElementById('varType').textContent = i18n.t('templateVarType');
     document.getElementById('varBaseModel').textContent = i18n.t('templateVarBaseModel');
 
-    // Опции селекта
+    // Select options
     document.getElementById('optDefault').textContent = i18n.t('templateDefault');
     document.getElementById('optDetailed').textContent = i18n.t('templateDetailed');
     document.getElementById('optSimple').textContent = i18n.t('templateSimple');

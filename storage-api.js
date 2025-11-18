@@ -37,7 +37,6 @@ const StorageAPI = (() => {
     const Cache = {
         /**
          * Load models cache from storage
-         * @returns {Promise<Object>} Models cache object
          */
         async load() {
             const cacheData = await Storage.get('modelsCache');
@@ -59,7 +58,6 @@ const StorageAPI = (() => {
 
         /**
          * Save models cache to storage
-         * @param {Object} cache - Models cache object
          */
         async save(cache) {
             await Storage.set('modelsCache', JSON.stringify(cache));
@@ -67,8 +65,6 @@ const StorageAPI = (() => {
 
         /**
          * Add model to cache
-         * @param {Object} modelInfo - Model information
-         * @returns {Promise<string>} Cache key
          */
         async add(modelInfo) {
             const cache = await this.load();
@@ -90,7 +86,6 @@ const StorageAPI = (() => {
 
         /**
          * Remove model from cache
-         * @param {string} key - Cache key (modelId-versionId)
          */
         async remove(key) {
             const cache = await this.load();
@@ -107,7 +102,6 @@ const StorageAPI = (() => {
 
         /**
          * Get cache statistics
-         * @returns {Promise<Object>} { count: number, models: Object }
          */
         async getStats() {
             const cache = await this.load();
@@ -119,9 +113,6 @@ const StorageAPI = (() => {
 
         /**
          * Check if model is cached
-         * @param {number} modelId
-         * @param {number} versionId
-         * @returns {Promise<boolean>}
          */
         async has(modelId, versionId) {
             const cache = await this.load();
@@ -131,9 +122,6 @@ const StorageAPI = (() => {
 
         /**
          * Get model from cache
-         * @param {number} modelId
-         * @param {number} versionId
-         * @returns {Promise<Object|null>}
          */
         async get(modelId, versionId) {
             const cache = await this.load();
@@ -148,8 +136,6 @@ const StorageAPI = (() => {
     const Files = {
         /**
          * Process .cm-info.json files and build cache
-         * @param {FileList|Array} files - Files to process
-         * @returns {Promise<Object>} { success: boolean, count: number, models: Object, errors: Array }
          */
         async process(files) {
             const modelsCache = {};
@@ -191,8 +177,6 @@ const StorageAPI = (() => {
 
         /**
          * Parse single .cm-info.json file
-         * @param {File} file
-         * @returns {Promise<Object|null>} Model data or null
          */
         async parse(file) {
             const text = await file.text();
@@ -215,8 +199,6 @@ const StorageAPI = (() => {
 
         /**
          * Validate model data
-         * @param {Object} data
-         * @returns {boolean}
          */
         validate(data) {
             return !!(data.ModelId && data.VersionId);
