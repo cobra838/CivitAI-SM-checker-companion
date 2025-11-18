@@ -9,7 +9,7 @@ class DownloadManager {
         this.runtimeAPI = (typeof browser !== 'undefined') ? browser.runtime : chrome.runtime;
         this.settings = null;
         this.defaultSettings = {
-            fileNameTemplate: '[{author}] {baseModel} - {originalFileName} ({createdAt}_{createdTime})',
+            fileNameTemplate: '[{author}] {base_model} - {file_name} ({created_at}_{created_time})',
             autoAddToCache: true,
             alwaysAskSaveLocation: true,
             downloadPrimaryFile: true
@@ -66,27 +66,39 @@ class DownloadManager {
     }
 
     /**
+     * Get file extension from filename
+     */
+    getFileExtension(file) {
+        if (!file || !file.name) return '';
+
+        // Extract extension from filename
+        const match = file.name.match(/(\.[^.]+)$/);
+        return match ? match[1].toLowerCase() : '';
+    }
+
+    /**
      * Generate filename from template
      * Available variables:
-     * {modelName}, {versionName}, {modelId}, {versionId}, {type}, {baseModel},
-     * {createdAt}, {updatedAt}, {createdTime}, {updatedTime}, {originalFileName}, {author}
+     * {model_name}, {created_at}, {updated_at}, {created_time}, {updated_time}, {author}, {base_model},
+     * {file_name}, {file_id}, {model_id}, {model_version_id}, {model_version_name}, {model_type}
      */
     generateFileName(modelData, template = null) {
         const tmpl = template || this.settings.fileNameTemplate;
 
         const variables = {
-            modelName: this.sanitizeFileName(modelData.modelName || 'model'),
-            versionName: this.sanitizeFileName(modelData.versionName || 'v1'),
-            modelId: modelData.modelId || '',
-            versionId: modelData.versionId || '',
-            type: this.sanitizeFileName(modelData.type || 'model'),
-            baseModel: this.sanitizeFileName(modelData.baseModel || ''),
-            createdAt: this.formatDate(modelData.createdAt || ''),
-            updatedAt: this.formatDate(modelData.updatedAt || ''),
-            createdTime: this.formatTime(modelData.createdAt || ''),
-            updatedTime: this.formatTime(modelData.updatedAt || ''),
-            originalFileName: this.sanitizeFileName(this.getFileNameWithoutExtension(modelData.originalFileName || '')),
-            author: this.sanitizeFileName(modelData.username || '')
+            model_name: this.sanitizeFileName(modelData.modelName),
+            created_at: this.formatDate(modelData.createdAt),
+            updated_at: this.formatDate(modelData.updatedAt),
+            created_time: this.formatTime(modelData.createdAt),
+            updated_time: this.formatTime(modelData.updatedAt),
+            author: this.sanitizeFileName(modelData.username),
+            base_model: this.sanitizeFileName(modelData.baseModel),
+            file_name: this.sanitizeFileName(this.getFileNameWithoutExtension(modelData.fileName)),
+            file_id: String(modelData.fileId || '_'),
+            model_id: String(modelData.modelId || '_'),
+            model_version_id: String(modelData.modelVersionId || '_'),
+            model_version_name: this.sanitizeFileName(modelData.modelVersionName),
+            model_type: this.sanitizeFileName(modelData.type)
         };
 
         let fileName = tmpl;
@@ -98,10 +110,9 @@ class DownloadManager {
         // Remove extra characters and spaces
         fileName = fileName.replace(/_{2,}/g, '_');
 
-        // Add extension if missing
-        if (!fileName.match(/\.(safetensors|ckpt|pt|bin)$/i)) {
-            fileName += '.safetensors';
-        }
+        // Add extension from original file name
+        const extension = this.getFileExtension(modelData.primaryFile);
+        fileName += extension;
 
         return fileName;
     }
@@ -110,6 +121,7 @@ class DownloadManager {
      * Get filename without extension
      */
     getFileNameWithoutExtension(fileName) {
+        if (!fileName) return '_';
         return fileName.replace(/\.[^/.]+$/, '');
     }
 
@@ -117,6 +129,9 @@ class DownloadManager {
      * Sanitize filename by removing invalid characters
      */
     sanitizeFileName(name) {
+        if (!name || typeof name !== 'string') {
+            return '_';
+        }
         return name
             .replace(/[<>:"/\\|?*]/g, '_')
             // .replace(/\s+/g, '_')
@@ -152,17 +167,19 @@ class DownloadManager {
             const primaryFile = versionInfo.files && versionInfo.files.length > 0 ? versionInfo.files[0] : null;
             
             return {
-                modelId: fullModelInfo.id,
-                versionId: versionInfo.id,
                 modelName: fullModelInfo.name,
-                versionName: versionInfo.name,
-                baseModel: versionInfo.baseModel,
-                type: fullModelInfo.type,
                 createdAt: versionInfo.createdAt,
                 updatedAt: versionInfo.updatedAt,
-                originalFileName: primaryFile?.name || '',
-                files: versionInfo.files || [],
-                username: fullModelInfo.user?.username || '',
+                username: fullModelInfo.user?.username,
+                baseModel: versionInfo.baseModel,
+                fileName: primaryFile?.name || '',
+                fileId: primaryFile?.id,
+                modelId: fullModelInfo.id,
+                modelVersionId: versionInfo.id,
+                modelVersionName: versionInfo.name,
+                type: fullModelInfo.type,
+                primaryFile: primaryFile,
+                files: versionInfo.files || []
             };
         } catch (e) {
             console.error(`${name_for_log} Failed to get model info:`, e);

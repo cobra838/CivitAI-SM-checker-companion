@@ -85,17 +85,17 @@ async function updateUI() {
     // Template variables
     document.getElementById('templateVariablesTitle').textContent = i18n.t('templateVariablesTitle');
     document.getElementById('varModelName').textContent = i18n.t('templateVarModelName');
-    document.getElementById('varVersionName').textContent = i18n.t('templateVarVersionName');
-    document.getElementById('varModelId').textContent = i18n.t('templateVarModelId');
-    document.getElementById('varVersionId').textContent = i18n.t('templateVarVersionId');
-    document.getElementById('varType').textContent = i18n.t('templateVarType');
-    document.getElementById('varBaseModel').textContent = i18n.t('templateVarBaseModel');
     document.getElementById('varCreatedAt').textContent = i18n.t('templateVarCreatedAt');
     document.getElementById('varUpdatedAt').textContent = i18n.t('templateVarUpdatedAt');
     document.getElementById('varCreatedTime').textContent = i18n.t('templateVarCreatedTime');
     document.getElementById('varUpdatedTime').textContent = i18n.t('templateVarUpdatedTime');
-    document.getElementById('varOriginalFileName').textContent = i18n.t('templateVarOriginalFileName');
-    document.getElementById('varAuthor').textContent = i18n.t('templateAuthor');
+    document.getElementById('varAuthor').textContent = i18n.t('templateVarAuthor');
+    document.getElementById('varBaseModel').textContent = i18n.t('templateVarBaseModel');
+    document.getElementById('varfileName').textContent = i18n.t('templateVarFileName');
+    document.getElementById('varModelId').textContent = i18n.t('templateVarModelId');
+    document.getElementById('varModelVersionId').textContent = i18n.t('templateVarModelVersionId');
+    document.getElementById('varModelVersionName').textContent = i18n.t('templateVarModelVersionName');
+    document.getElementById('varModelType').textContent = i18n.t('templateVarModelType');
 
 
     if (i18n.currentLocale === 'ar') {

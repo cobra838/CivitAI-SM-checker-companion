@@ -130,7 +130,7 @@
             }
 
             const modelId = modelInfo.modelId;
-            const key = `${modelId}-${versionId}`;
+            const key = `${modelId}-${modelInfo.modelVersionId}`;
             const isDownloaded = modelsCache.hasOwnProperty(key);
 
             console.log(`${name_for_log} Model ID:`, modelId, 'Downloaded:', isDownloaded);
@@ -250,7 +250,7 @@
                 contextMenu.style.display = 'block';
             });
         } else {
-            const versionName = modelInfo?.versionName || i18n.t('download');
+            const versionName = modelInfo?.modelVersionName || i18n.t('download');
             indicator.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/>
@@ -259,7 +259,7 @@
                 </svg>
                 <span>${versionName}</span>
             `;
-            indicator.title = `${i18n.t('tooltipModel')}: ${modelInfo.modelName}\n${i18n.t('tooltipVersion')}: ${versionName}\n${i18n.t('tooltipType')}: ${modelInfo.type}\n\n${i18n.t('clicktodownload')}`;
+            indicator.title = `${i18n.t('tooltipModel')}: ${modelInfo.modelName}\n${i18n.t('tooltipVersion')}: ${modelInfo.modelVersionName}\n${i18n.t('tooltipType')}: ${modelInfo.type}\n\n${i18n.t('clicktodownload')}`;
 
             // Add click handler for download
             indicator.addEventListener('click', async () => {

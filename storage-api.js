@@ -68,13 +68,13 @@ const StorageAPI = (() => {
          */
         async add(modelInfo) {
             const cache = await this.load();
-            const key = `${modelInfo.modelId}-${modelInfo.versionId}`;
+            const key = `${modelInfo.modelId}-${modelInfo.modelVersionId}`;
 
             cache[key] = {
                 modelId: modelInfo.modelId,
-                versionId: modelInfo.versionId,
+                versionId: modelInfo.modelVersionId,
                 modelName: modelInfo.modelName,
-                versionName: modelInfo.versionName,
+                versionName: modelInfo.modelVersionName,
                 baseModel: modelInfo.baseModel,
                 type: modelInfo.type,
                 importedAt: new Date().toISOString()
