@@ -717,31 +717,34 @@ const translations = {
 };
 
 class I18n {
-  constructor() {
-    this.currentLocale = this.detectLanguage();
-  }
-  
-  detectLanguage() {
-    const browserLang = navigator.language || navigator.userLanguage || 'en';
-    if (translations[browserLang]) return browserLang;
-    const primary = browserLang.split('-')[0];
-    if (translations[primary]) return primary;
-    if (browserLang.startsWith('zh')) {
-      return browserLang.includes('TW') || browserLang.includes('HK') ? 'zh_TW' : 'zh_CN';
+    constructor() {
+        this.currentLocale = this.detectLanguage();
     }
-    if (browserLang.startsWith('pt')) return 'pt_BR';
-    return 'en';
-  }
-  
-  t(key, params = {}) {
-    let text = translations[this.currentLocale]?.[key] || translations['en'][key] || key;
-    Object.keys(params).forEach(param => {
-      text = text.replace(new RegExp(`\\{${param}\\}`, 'g'), params[param]);
-    });
-    return text;
-  }
+
+    detectLanguage() {
+        const browserLang = navigator.language || navigator.userLanguage || 'en';
+        if (translations[browserLang]) return browserLang;
+        const primary = browserLang.split('-')[0];
+        if (translations[primary]) return primary;
+        if (browserLang.startsWith('zh')) {
+            return browserLang.includes('TW') || browserLang.includes('HK') ? 'zh_TW' : 'zh_CN';
+        }
+        if (browserLang.startsWith('pt')) return 'pt_BR';
+        return 'en';
+    }
+
+    t(key, params = {}) {
+        let text = translations[this.currentLocale]?.[key] || translations['en'][key] || key;
+        Object.keys(params).forEach(param => {
+            text = text.replace(new RegExp(`\\{${param}\\}`, 'g'), params[param]);
+        });
+        return text;
+    }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { I18n, translations };
+    module.exports = {
+        I18n,
+        translations
+    };
 }

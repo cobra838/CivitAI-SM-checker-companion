@@ -27,28 +27,28 @@
 
         // Track URL changes
         (function hijackHistory() {
-          const pushState = history.pushState;
-          history.pushState = function () {
-            pushState.apply(history, arguments);
-            window.dispatchEvent(new Event('civitai-urlchange'));
-          };
-          window.addEventListener('civitai-urlchange', () => {
-            if (location.pathname.includes('/models/')) {
-              setTimeout(() => checkCurrentModel(), 300);
-            }
-          });
+            const pushState = history.pushState;
+            history.pushState = function() {
+                pushState.apply(history, arguments);
+                window.dispatchEvent(new Event('civitai-urlchange'));
+            };
+            window.addEventListener('civitai-urlchange', () => {
+                if (location.pathname.includes('/models/')) {
+                    setTimeout(() => checkCurrentModel(), 300);
+                }
+            });
         })();
 
         // Track version parameter changes
         (function watchVersionParam() {
-          let lastSearch = location.search;
-          setInterval(() => {
-            if (location.search !== lastSearch && location.pathname.includes('/models/')) {
-              lastSearch = location.search;
-              console.log(`${name_for_log} 🔄 Version parameter changed:`, lastSearch);
-              setTimeout(() => checkCurrentModel(), 300);
-            }
-          }, 500);
+            let lastSearch = location.search;
+            setInterval(() => {
+                if (location.search !== lastSearch && location.pathname.includes('/models/')) {
+                    lastSearch = location.search;
+                    console.log(`${name_for_log} 🔄 Version parameter changed:`, lastSearch);
+                    setTimeout(() => checkCurrentModel(), 300);
+                }
+            }, 500);
         })();
 
         // Load cache from storage
@@ -56,61 +56,63 @@
 
         await waitForElement('.mantine-Title-root');
         await checkCurrentModel();
-        
+
         function createContextMenu() {
-          if (contextMenu) return;
-          contextMenu = document.createElement('div');
-          contextMenu.id = 'cc-context-menu';
-          contextMenu.style.cssText = `
+            if (contextMenu) return;
+            contextMenu = document.createElement('div');
+            contextMenu.id = 'cc-context-menu';
+            contextMenu.style.cssText = `
             position:absolute;z-index:999999;background:#fff;border:1px solid #ccc;
             border-radius:6px;padding:4px 0;box-shadow:0 2px 8px rgba(0,0,0,.25);
             display:none;font-size:13px;font-weight:600;color:#d32f2f;cursor:pointer;
           `;
-          contextMenu.innerHTML = `<div style="padding:6px 12px;">${i18n.t('removeFromCache')}</div>`;
-          document.body.appendChild(contextMenu);
+            contextMenu.innerHTML = `<div style="padding:6px 12px;">${i18n.t('removeFromCache')}</div>`;
+            document.body.appendChild(contextMenu);
 
-          contextMenu.firstElementChild.onclick = async () => {
-            if (!currentContextKey) return;
-            
-            console.log(`${name_for_log} Before delete modelsCache keys:`, Object.keys(modelsCache).length);
-            
-            // Use Storage API to remove from cache
-            await StorageAPI.cache.remove(currentContextKey);
-            
-            console.log(`${name_for_log} After delete modelsCache keys:`, Object.keys(modelsCache).length - 1);
-            
-            // Reload local cache
-            await loadCache();
-            
-            // Redraw indicator
-            checkCurrentModel();
-            
-            // Hide menu
-            contextMenu.style.display = 'none';
-          };
+            contextMenu.firstElementChild.onclick = async () => {
+                if (!currentContextKey) return;
 
-          // Hide menu on click anywhere
-          document.addEventListener('click', () => contextMenu.style.display = 'none', { capture: true });
+                console.log(`${name_for_log} Before delete modelsCache keys:`, Object.keys(modelsCache).length);
+
+                // Use Storage API to remove from cache
+                await StorageAPI.cache.remove(currentContextKey);
+
+                console.log(`${name_for_log} After delete modelsCache keys:`, Object.keys(modelsCache).length - 1);
+
+                // Reload local cache
+                await loadCache();
+
+                // Redraw indicator
+                checkCurrentModel();
+
+                // Hide menu
+                contextMenu.style.display = 'none';
+            };
+
+            // Hide menu on click anywhere
+            document.addEventListener('click', () => contextMenu.style.display = 'none', {
+                capture: true
+            });
         }
-        
+
         createContextMenu();
     }
 
     async function loadCache() {
-      modelsCache = await StorageAPI.cache.load();
-      cacheBuilt = true;
-      
-      const count = Object.keys(modelsCache).length;
-      console.log(`${name_for_log} Cache loaded:`, count, 'models');
-      
-      if (count === 0) {
-        showNotification(i18n.t('cacheEmptyNotification'), 'info');
-      }
+        modelsCache = await StorageAPI.cache.load();
+        cacheBuilt = true;
+
+        const count = Object.keys(modelsCache).length;
+        console.log(`${name_for_log} Cache loaded:`, count, 'models');
+
+        if (count === 0) {
+            showNotification(i18n.t('cacheEmptyNotification'), 'info');
+        }
     }
 
     async function checkCurrentModel() {
         if (!cacheBuilt) return;
-        
+
         try {
             const versionId = await getCurrentVersionId();
             if (!versionId) {
@@ -143,20 +145,20 @@
         // First try to get from URL
         const urlParams = new URLSearchParams(window.location.search);
         const versionIdFromUrl = urlParams.get('modelVersionId');
-        
+
         if (versionIdFromUrl) {
             const id = parseInt(versionIdFromUrl, 10);
             console.log(`${name_for_log} ✅ VersionId from URL:`, id);
             return id;
         }
-        
+
         // If not in URL - search in performance (for default version)
         console.log(`${name_for_log} 🔍 Waiting 1 second for request...`);
         await new Promise(r => setTimeout(r, 1000));
-        
+
         console.log(`${name_for_log} 🔍 Looking for VersionId in performance entries...`);
         const entries = performance.getEntriesByType('resource');
-        
+
         for (const entry of entries) {
             const url = entry.name;
             if (url.includes('modelVersion.getById')) {
@@ -170,7 +172,7 @@
                 }
             }
         }
-        
+
         console.log(`${name_for_log} ❌ VersionId not found`);
         return null;
     }
@@ -191,7 +193,7 @@
             showNotification(i18n.t('downloading'), 'info');
             await downloadManager.downloadModel(versionId, modelInfo);
             // showNotification(i18n.t('downloadComplete'), 'success');
-            
+
             // Reload cache and update indicator
             await loadCache();
             await checkCurrentModel();
@@ -239,13 +241,13 @@
             `;
             indicator.title = `${i18n.t('tooltipModel')}: ${modelData.modelName}\n${i18n.t('tooltipVersion')}: ${modelData.versionName}\n${i18n.t('tooltipType')}: ${modelData.type}\n${i18n.t('tooltipImport')}: ${imported}`;
             indicator.style.cursor = 'default';
-            
+
             indicator.addEventListener('contextmenu', (e) => {
-              e.preventDefault();
-              currentContextKey = key;
-              contextMenu.style.left = e.pageX + 'px';
-              contextMenu.style.top  = e.pageY + 'px';
-              contextMenu.style.display = 'block';
+                e.preventDefault();
+                currentContextKey = key;
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.style.display = 'block';
             });
         } else {
             const versionName = modelInfo?.versionName || i18n.t('download');
@@ -258,7 +260,7 @@
                 <span>${versionName}</span>
             `;
             indicator.title = `${i18n.t('tooltipModel')}: ${modelInfo.modelName}\n${i18n.t('tooltipVersion')}: ${versionName}\n${i18n.t('tooltipType')}: ${modelInfo.type}\n\n${i18n.t('clicktodownload')}`;
-            
+
             // Add click handler for download
             indicator.addEventListener('click', async () => {
                 if (versionId && !indicator.dataset.downloading) {
@@ -274,16 +276,16 @@
                         </svg>
                         <span>${i18n.t('downloading')}</span>
                     `;
-                    
+
                     await handleDownload(versionId, modelInfo);
-                    
+
                     delete indicator.dataset.downloading;
                 }
             });
         }
 
         titleElement.parentElement.appendChild(indicator);
-        
+
         // Hover effects
         indicator.onmouseenter = () => {
             if (!indicator.dataset.downloading && !isDownloaded) {
