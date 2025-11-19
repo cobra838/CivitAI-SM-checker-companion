@@ -26,6 +26,7 @@
         await downloadManager.init();
 
         // Track URL changes
+        // Track URL changes - не очень хорошо отслеживает при переключении с картинки в модель в Firefox (возможно, виноват кеш или сам firefox)
         (function hijackHistory() {
             const pushState = history.pushState;
             history.pushState = function() {
@@ -194,12 +195,18 @@
             await downloadManager.downloadModel(versionId, modelInfo);
             // showNotification(i18n.t('downloadComplete'), 'success');
 
+            //test
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
             // Reload cache and update indicator
             await loadCache();
             await checkCurrentModel();
         } catch (e) {
             console.error(`${name_for_log} Download error:`, e);
             showNotification(i18n.t('downloadError'), 'error');
+            
+            //test
+            await checkCurrentModel();
         }
     }
 
@@ -279,7 +286,8 @@
 
                     await handleDownload(versionId, modelInfo);
 
-                    delete indicator.dataset.downloading;
+                    //test disable
+                    // delete indicator.dataset.downloading;
                 }
             });
         }

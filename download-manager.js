@@ -228,6 +228,21 @@ class DownloadManager {
                     modelInfo: modelInfo,
                     settings: this.settings
                 }, async (response) => {
+                    // Check timeout
+                    const lastError = (typeof browser !== 'undefined') ?
+                        browser.runtime.lastError :
+                        chrome.runtime.lastError;
+
+                    if (lastError) {
+                        // Timeout - but loading is already in progress, add to cache
+                        console.log(`${name_for_log} Response timeout (dialog), adding to cache anyway`);
+                        if (this.settings.autoAddToCache && typeof StorageAPI !== 'undefined') {
+                            await StorageAPI.cache.add(modelInfo);
+                        }
+                        resolve({ success: true, timeout: true });
+                        return;
+                    }
+
                     if (response && response.success) {
                         console.log(`${name_for_log} Download started successfully`);
 
