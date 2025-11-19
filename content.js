@@ -25,7 +25,6 @@
         downloadManager = new DownloadManager();
         await downloadManager.init();
 
-        // Track URL changes
         // Track URL changes - не очень хорошо отслеживает при переключении с картинки в модель в Firefox (возможно, виноват кеш или сам firefox)
         (function hijackHistory() {
             const pushState = history.pushState;
@@ -65,26 +64,65 @@
             contextMenu.style.cssText = `
             position:absolute;z-index:999999;background:#fff;border:1px solid #ccc;
             border-radius:6px;padding:4px 0;box-shadow:0 2px 8px rgba(0,0,0,.25);
-            display:none;font-size:13px;font-weight:600;color:#d32f2f;cursor:pointer;
-          `;
-            contextMenu.innerHTML = `<div style="padding:6px 12px;">${i18n.t('removeFromCache')}</div>`;
+            display:none;font-size:13px;font-weight:600;cursor:pointer;
+            `;
+            contextMenu.innerHTML = `
+            <div id="cc-menu-add" style="padding:6px 12px;color:#2f9e44;display:none;">${i18n.t('addToCache')}</div>
+            <div id="cc-menu-remove" style="padding:6px 12px;color:#d32f2f;display:none;">${i18n.t('removeFromCache')}</div>
+            `;
             document.body.appendChild(contextMenu);
 
-            contextMenu.firstElementChild.onclick = async () => {
+            const addMenuItem = document.getElementById('cc-menu-add');
+            const removeMenuItem = document.getElementById('cc-menu-remove');
+
+            // Добавить в кеш
+            addMenuItem.onclick = async () => {
                 if (!currentContextKey) return;
 
-                console.log(`${name_for_log} Before delete modelsCache keys:`, Object.keys(modelsCache).length);
+                // Получаем modelInfo из глобальной переменной или парсим из ключа
+                const [modelId, versionId] = currentContextKey.split('-').map(Number);
+
+                try {
+                    const modelInfo = await downloadManager.getModelInfo(versionId);
+                    if (modelInfo) {
+
+                        console.log(`${name_for_log} Before added to cache:`, Object.keys(modelsCache).length);
+                        await StorageAPI.cache.add(modelInfo);
+                        console.log(`${name_for_log} After added to cache:`, Object.keys(modelsCache).length + 1);
+                        console.log(`${name_for_log} Model added to cache:`, currentContextKey);
+
+                        // Reload cache and update indicator
+                        await loadCache();
+                        await checkCurrentModel();
+
+                        // showNotification(i18n.t('addedToCache'), 'success');
+                    }
+                } catch (e) {
+                    console.error(`${name_for_log} Error adding to cache:`, e);
+                    showNotification(i18n.t('errorAddingToCache'), 'error');
+                }
+
+                contextMenu.style.display = 'none';
+            };
+
+            // Удалить из кеша
+            removeMenuItem.onclick = async () => {
+                if (!currentContextKey) return;
 
                 // Use Storage API to remove from cache
+                console.log(`${name_for_log} Before delete from cache:`, Object.keys(modelsCache).length);
                 await StorageAPI.cache.remove(currentContextKey);
+                console.log(`${name_for_log} After delete from cache:`, Object.keys(modelsCache).length - 1);
+                console.log(`${name_for_log} Model removed from cache:`, currentContextKey);
 
-                console.log(`${name_for_log} After delete modelsCache keys:`, Object.keys(modelsCache).length - 1);
 
                 // Reload local cache
                 await loadCache();
 
                 // Redraw indicator
                 checkCurrentModel();
+
+                // showNotification(i18n.t('removedFromCache'), 'success');
 
                 // Hide menu
                 contextMenu.style.display = 'none';
@@ -204,7 +242,7 @@
         } catch (e) {
             console.error(`${name_for_log} Download error:`, e);
             showNotification(i18n.t('downloadError'), 'error');
-            
+
             //test
             await checkCurrentModel();
         }
@@ -252,6 +290,11 @@
             indicator.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 currentContextKey = key;
+
+                // Показываем только "Удалить из кеша"
+                document.getElementById('cc-menu-add').style.display = 'none';
+                document.getElementById('cc-menu-remove').style.display = 'block';
+
                 contextMenu.style.left = e.pageX + 'px';
                 contextMenu.style.top = e.pageY + 'px';
                 contextMenu.style.display = 'block';
@@ -289,6 +332,20 @@
                     //test disable
                     // delete indicator.dataset.downloading;
                 }
+            });
+
+            // Add context menu handler for "Add to cache"
+            indicator.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                currentContextKey = key;
+
+                // Показываем только "Добавить в кеш"
+                document.getElementById('cc-menu-add').style.display = 'block';
+                document.getElementById('cc-menu-remove').style.display = 'none';
+
+                contextMenu.style.left = e.pageX + 'px';
+                contextMenu.style.top = e.pageY + 'px';
+                contextMenu.style.display = 'block';
             });
         }
 

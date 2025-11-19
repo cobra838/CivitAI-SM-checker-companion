@@ -165,7 +165,7 @@ class DownloadManager {
 
             // Get primary file
             const primaryFile = versionInfo.files && versionInfo.files.length > 0 ? versionInfo.files[0] : null;
-            
+
             return {
                 modelName: fullModelInfo.name,
                 createdAt: versionInfo.createdAt,
